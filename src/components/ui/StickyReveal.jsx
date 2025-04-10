@@ -61,7 +61,7 @@ export const StickyScroll = ({
     linearGradients[0]
   );
 
-  // Whenever activeCard changes, pick a new gradient
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setBackgroundGradient(linearGradients[activeCard % linearGradients.length]);
   }, [activeCard]);
@@ -106,6 +106,7 @@ export const StickyScroll = ({
                 <div className="space-y-1">
                   {descriptionbyline[index].map((line, i) => (
                     <RenderLine
+                      key={i}
                       line={line}
                       highlight={[
                         "URL과 옵션만 적어주면 끝",

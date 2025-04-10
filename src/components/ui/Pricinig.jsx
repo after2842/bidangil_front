@@ -149,7 +149,7 @@ const Skeleton = ({
       repeat: Number.POSITIVE_INFINITY,
       repeatDelay: 1,
     });
-  }, []);
+  }, [sequence]);
 
   const renderCurrencyIcon = (currency, className, circleClass) => {
     const iconProps = {

@@ -9,14 +9,42 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/card": "^2.2.15",
+    "@heroui/navbar": "^2.2.14",
+    "@heroui/react": "^2.7.5",
+    "@lottiefiles/dotlottie-react": "^0.13.3",
+    "@material-tailwind/react": "^2.1.10",
+    "@radix-ui/react-hover-card": "^1.1.6",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-navigation-menu": "^1.2.5",
+    "@tabler/icons-react": "^3.31.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.6.3",
+    "lottie-react": "^2.4.1",
+    "lucide-react": "^0.483.0",
+    "motion": "^12.6.3",
+    "next": "14.2.26",
+    "prismjs": "^1.30.0",
+    "qss": "^3.0.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.26"
+    "react-icons": "^5.5.0",
+    "react-intersection-observer": "^9.16.0",
+    "react-jsx-parser": "^2.4.0",
+    "react-payment-icons": "^1.2.6",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1",
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "@svgr/webpack": "^8.1.0",
     "eslint": "^8",
-    "eslint-config-next": "14.2.26"
+    "eslint-config-next": "14.2.26",
+    "postcss": "^8",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^3.4.1"
   }
 }

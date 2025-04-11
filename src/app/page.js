@@ -6,18 +6,34 @@ import BentoGridDemo from "@/components/ui/BentoGrid";
 import GlowingEffectDemoSecond from "@/components/ui/GlowingEffectDemo";
 import SubmitGPTform from "@/components/ui/GptForm";
 import { Button } from "@/components/ui/moving-border";
-import { ContainerTextFlip } from "@/components/ui/container-text-flip";
+
 import Footer from "@/components/ui/Footer";
 import LampDemo from "@/components/ui/lamp";
 import { TestglowBento } from "@/components/ui/GlowingEffectDemo";
 import { GlowingButton } from "@/components/ui/GlowingEffectDemo";
-import { StickyScroll } from "@/components/ui/StickyReveal";
+
 import ConfirmRequest from "@/assets/icons/confirmRequest.svg";
 import PayPhone from "@/assets/icons/payPhone.svg";
 import FormSubmit from "@/assets/icons/formSubmit.svg";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Pricing from "@/components/ui/Pricinig";
+import dynamic from "next/dynamic";
 
+const ContainerTextFlip = dynamic(
+  () =>
+    import("@/components/ui/container-text-flip").then((mod) => mod.default),
+  {
+    ssr: false, // Disable SSR to avoid hydration error
+    loading: () => <p className="text-4xl font-myfont text-white"></p>,
+  }
+);
+
+const StickyScroll = dynamic(
+  () => import("@/components/ui/StickyReveal").then((mod) => mod.default),
+  {
+    ssr: false, // Disable SSR to avoid hydration error
+  }
+);
 export default function Home() {
   const content = [
     {

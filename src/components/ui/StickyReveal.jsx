@@ -3,12 +3,12 @@ import React, { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export const StickyScroll = ({
+export default function StickyScroll({
   contentTitle,
   contentDescription,
   contentContent,
   contentClassName,
-}) => {
+}) {
   const [activeCard, setActiveCard] = useState(0);
   const descriptionbyline = contentDescription.map((lines) => {
     return lines.split("\n");
@@ -137,7 +137,7 @@ export const StickyScroll = ({
       </div>
     </motion.div>
   );
-};
+}
 
 const escapeRegExp = (str) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 

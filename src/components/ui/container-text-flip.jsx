@@ -1,16 +1,15 @@
 "use client";
 import React, { useState, useEffect, useId } from "react";
 
-
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export function ContainerTextFlip({
+export default function ContainerTextFlip({
   words = ["옷", "화장품", "한국음식", "책", "유아용품", "생필품", "이불"],
   interval = 3000,
   className,
   textClassName,
-  animationDuration = 700
+  animationDuration = 700,
 }) {
   const id = useId();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -53,8 +52,9 @@ export function ContainerTextFlip({
         "dark:[background:linear-gradient(to_bottom,var(--color-neutral-700),var(--color-neutral-800))]",
         "dark:shadow-[inset_0_-1px_#10171e,inset_0_0_0_1px_hsla(205,89%,46%,.24),_0_4px_8px_#00000052]",
         className
-      ) }
-      key={words[currentWordIndex]}>
+      )}
+      key={words[currentWordIndex]}
+    >
       <motion.div
         transition={{
           duration: animationDuration / 1000,
@@ -62,7 +62,8 @@ export function ContainerTextFlip({
         }}
         className={cn("inline-block", textClassName)}
         ref={textRef}
-        layoutId={`word-div-${words[currentWordIndex]}-${id}`}>
+        layoutId={`word-div-${words[currentWordIndex]}-${id}`}
+      >
         <motion.div className="inline-block">
           {words[currentWordIndex].split("").map((letter, index) => (
             <motion.span
@@ -77,7 +78,8 @@ export function ContainerTextFlip({
               }}
               transition={{
                 delay: index * 0.02,
-              }}>
+              }}
+            >
               {letter}
             </motion.span>
           ))}

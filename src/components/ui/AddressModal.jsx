@@ -40,7 +40,7 @@ export default function AddressModal({ address, setAddress, onClose }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -100 }}
         transition={{ duration: 0.3 }}
-        className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-lg shadow-xl"
+        className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-2xlg md:rounded-2xlg shadow-xl"
       >
         <AddressScreen
           address={address}

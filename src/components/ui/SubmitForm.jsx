@@ -26,7 +26,7 @@ function Card({ formData, index, handleChange }) {
         },
       }}
       // Fill available space above the bottom button.
-      className="h-[calc(90vh-180px)] w-full md:w-96 bg-gray-100 rounded-2xl md:rounded-2xl shadow-md flex flex-col p-4
+      className="h-[calc(90vh-180px)] w-full md:w-96 bg-gray-100 rounded-xl md:rounded-2xl shadow-md flex flex-col p-4
                  snap-center flex-shrink-0 "
     >
       <h3 className="text-lg font-bold mb-2 text-center text-black">
@@ -87,7 +87,7 @@ function Carousel({ items }) {
   return (
     <div className="relative w-full">
       <div
-        className="flex w-full overflow-x-auto overscroll-x-auto py-8 scroll-smooth snap-x snap-mandatory
+        className="flex w-full overflow-x-auto overscroll-x-auto py-4md:py-8 scroll-smooth snap-x snap-mandatory
                    [scrollbar-width:none]"
         ref={carouselRef}
       >
@@ -191,7 +191,7 @@ export default function DynamicFormCarousel() {
           onClick={handleAddCard}
           className="w-24 py-2 text-white hover:bg-blue-700 rounded-md
                   
-                   bg-blue-600 text-lg transition duration-200 mb-5 mr-5"
+                   bg-blue-600 text-lg transition duration-200 mb-0 md:mb-5 mr-5"
         >
           추가하기
         </button>
@@ -200,7 +200,7 @@ export default function DynamicFormCarousel() {
           onClick={() => setShowAddressModal(true)}
           className="w-24 py-2 text-black hover:bg-white rounded-md
                   
-                   bg-white text-lg transition duration-200 mb-5"
+                   bg-white text-lg transition duration-200 mb-0 md:mb-5"
         >
           배송 주소
         </button>

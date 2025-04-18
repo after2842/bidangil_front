@@ -1,6 +1,6 @@
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
-import { User } from "lucide-react";
+import Script from "next/script";
 
 export const metadata = {
   title: "Create Next App",
@@ -10,9 +10,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <UserProvider>
-        <body>{children}</body>
-      </UserProvider>
+      <head>
+        <Script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDIYy1cEoJIzN4VacqPuC8pV66I1wjVzg&v=beta&libraries=places"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body>
+        <UserProvider>{children}</UserProvider>
+      </body>
     </html>
   );
 }

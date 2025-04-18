@@ -39,9 +39,9 @@ export function AddressScreen({ address, setAddress, onClose }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -100 }}
         transition={{ duration: 0.3 }}
-        className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-lg shadow-xl"
+        className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-xl shadow-xl"
       >
-        <div className="shadow-input text-white mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+        <div className="shadow-input text-white mx-auto w-full rounded-xl max-w-md bg-white p-4 md:p-8 dark:bg-black">
           {/* Title */}
           <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200 font-myfont flex justify-center">
             수령인 주소

@@ -18,7 +18,7 @@ import FormSubmit from "@/assets/icons/formSubmit.svg";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Pricing from "@/components/ui/Pricinig";
 import dynamic from "next/dynamic";
-
+import { useRouter } from "next/navigation";
 const ContainerTextFlip = dynamic(
   () =>
     import("@/components/ui/container-text-flip").then((mod) => mod.default),
@@ -35,6 +35,7 @@ const StickyScroll = dynamic(
   }
 );
 export default function Home() {
+  const router = useRouter();
   const content = [
     {
       title: "신청서 작성",
@@ -49,7 +50,7 @@ export default function Home() {
     {
       title: "신청서 확인",
       description:
-        "비단길에서 직접 신청한 물건을 확인해요.\n 상품의 통관안내와 가격을 최종적으로 안내드려요.\n 잠깐! 아직 결제하실 필요 없어요. \n결제는 배송비랑 한번에 결제해요.",
+        "비단길에서 직접 신청한 물건을 확인해요.\n 상품의 통관안내와 가격을 최종적으로 안내드려요.\n 상품을 결제하시면, 비단길에서 주문을 진행합니다.",
       content: (
         <div className="h-screen flex items-center justify-center">
           <ConfirmRequest style={{ width: "100%" }}></ConfirmRequest>
@@ -59,7 +60,7 @@ export default function Home() {
     {
       title: "결제",
       description:
-        "상품이 준비되면 고객님께 배송비, 물건의 가격, 그리고 수수료를 총합해서 안내드려요.\n 홈페이지->내 정보. 혹은 휴대폰으로 받은 링크로 결제해주세요.",
+        "상품의 배송이 준비되면 고객님께 배송비와 수수료를 총합해서 안내드려요.\n 홈페이지->내 정보. 혹은 휴대폰으로 받은 링크로 결제해주세요.",
       content: (
         <div className="h-screen flex items-center justify-center">
           <PayPhone style={{ width: "100%" }}></PayPhone>
@@ -101,6 +102,7 @@ export default function Home() {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
   return (
     <div className="w-full">
       {/* Section 1 with top background image */}
@@ -126,7 +128,15 @@ export default function Home() {
 
           <div className="pt-[60px]">
             <div>
-              <GlowingButton></GlowingButton>
+              <button
+                className="bg-white border border-blue-500 rounded-full px-6 py-4 hover:bg-blue-500 text-2xl font-myfont"
+                onClick={() => {
+                  router.push("/form");
+                }}
+              >
+                지금 주문하기
+              </button>
+              {/* <GlowingButton></GlowingButton> */}
             </div>
           </div>
         </div>

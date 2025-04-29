@@ -111,6 +111,7 @@ export default function StickyScroll({
                       highlight={[
                         "URL과 옵션만 적어주면 끝",
                         "통관안내와 가격을 최종적으로 안내드려요.",
+                        "상품을 결제",
                         "휴대폰으로 받은 링크로 결제해주세요",
                         "배송이 시작돼요",
                       ]}

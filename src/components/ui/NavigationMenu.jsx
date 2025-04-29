@@ -39,9 +39,12 @@ export default function FloatingNavbar() {
 
         {/* Right: Menu Options */}
         <nav className="flex items-center space-x-8 text-white">
-          <a href="/community" className=" font-semibold hover:underline">
-            커뮤니티
-          </a>
+          <button>
+            <a href="/community" className=" font-semibold hover:underline">
+              커뮤니티
+            </a>
+          </button>
+
           {user ? (
             <div className="flex items-center space-x-8 text-white">
               <button onClick={logout}>로그아웃</button>

@@ -92,9 +92,6 @@ export default function AddressSuggestions({ address, setAddress }) {
             if (types.includes("postal_code")) {
               updated.zip = component.long_name;
             }
-            if (types.includes("country")) {
-              updated.country = component.long_name;
-            }
           }
           setAddress(updated);
           setPredictions([]); // hide suggestions

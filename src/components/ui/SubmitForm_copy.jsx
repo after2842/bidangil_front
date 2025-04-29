@@ -20,6 +20,7 @@ import RequestForm from "./RequestForm";
 import Image from "next/image";
 import AddressAutocomplete from "./AddressAutoComp";
 export default function Submit_2() {
+  const router = useRouter();
   const { fetchCsrfToken } = useUser();
   const [currentPage, setcurrentPage] = useState(1);
   const [address, setAddress] = useState({
@@ -33,7 +34,7 @@ export default function Submit_2() {
     name: "",
   });
 
-  const [forms, setforms] = useState([{ url: "", desc: "", price: "" }]);
+  const [forms, setforms] = useState([{ url: "", desc: "" }]);
   const [showMissingModal, setMissingModal] = useState(false);
   const [showValidAddress, setValidAddress] = useState(false);
   const [precise_data, setPreciseData] = useState("");
@@ -60,34 +61,34 @@ export default function Submit_2() {
     // join the main parts with commas
     return parts.join(", ");
   };
-  const validateAddress = async ({ address }) => {
-    const csrf_token = await fetchCsrfToken();
-    try {
-      const response = await fetch(
-        "http://localhost:8000/api/validate_address/",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "X-csrftoken": csrf_token,
-          },
-          body: JSON.stringify(address),
-        }
-      );
-      const result = await response.json();
-      console.log(`result status: ${result["result"]}`);
-      if (response.status === 200) {
-        console.log(`RESULTTT:${result["result"]}`);
-        return result["result"];
-      } else {
-        alert("서버 오류가 발생했습니다.");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("네트워크 오류가 발생했습니다.");
-    }
-  };
+  // const validateAddress = async ({ address }) => {
+  //   const csrf_token = await fetchCsrfToken();
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:8000/api/validate_address/",
+  //       {
+  //         method: "POST",
+  //         credentials: "include",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "X-csrftoken": csrf_token,
+  //         },
+  //         body: JSON.stringify(address),
+  //       }
+  //     );
+  //     const result = await response.json();
+  //     console.log(`result status: ${result["result"]}`);
+  //     if (response.status === 200) {
+  //       console.log(`RESULTTT:${result["result"]}`);
+  //       return result["result"];
+  //     } else {
+  //       alert("서버 오류가 발생했습니다.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     alert("네트워크 오류가 발생했습니다.");
+  //   }
+  // };
   const nextPage = async ({ index }) => {
     if (index === 1) {
       if (
@@ -334,16 +335,6 @@ const ControlPanel = ({
                                 ? form.desc.slice(0, 36) + "..."
                                 : form.desc}
                             </p>
-                          </div>{" "}
-                          <div className=" flex">
-                            {!form.price ? (
-                              <></>
-                            ) : (
-                              <>
-                                <TagIcon className="w-4 mr-2 flex-shrink-0" />{" "}
-                                <p>{form.price}원</p>
-                              </>
-                            )}
                           </div>{" "}
                         </button>
                       </div>

@@ -1,81 +1,61 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Sparkles } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useEffect } from "react";
-// Example statuses for an in-progress order:
-const sampleInProgressOrders = [
-  {
-    id: 1,
-    productName: "Awesome Shoes",
-    productName: "Warm T-shirt 외 4개",
-    orderDate: "2023-07-10",
-    deliveryfee: 12800,
-    price: 23100,
-    steps: [
-      { label: "주문 접수 완료", isDone: true },
-      { label: "물건 구매 완료", isDone: true },
-      { label: "물건 도착", isDone: true },
-      { label: "구매/배송비 결제 완료", isDone: false },
-      { label: "배송 시작", isDone: false },
-    ],
-  },
-];
-
-// Example of completed orders
-const samplePastOrders = [
-  {
-    id: 101,
-    productName: "Cool T-shirt",
-    orderDate: "2023-07-10",
-    deliveredDate: "2023-07-14",
-    price: 30000,
-  },
-  {
-    id: 102,
-    productName: "Fancy Hat",
-    orderDate: "2023-06-25",
-    deliveredDate: "2023-06-30",
-    price: 25000,
-  },
-  {
-    id: 101,
-    productName: "Cool T-shirt",
-    orderDate: "2023-07-10",
-    deliveredDate: "2023-07-14",
-    price: 30000,
-  },
-  {
-    id: 102,
-    productName: "Fancy Hat",
-    orderDate: "2023-06-25",
-    deliveredDate: "2023-06-30",
-    price: 25000,
-  },
-  {
-    id: 101,
-    productName: "Cool T-shirt",
-    orderDate: "2023-07-10",
-    deliveredDate: "2023-07-14",
-    price: 30000,
-  },
-  {
-    id: 102,
-    productName: "Fancy Hat",
-    orderDate: "2023-06-25",
-    deliveredDate: "2023-06-30",
-    price: 25000,
-  },
-];
 
 export default function UserProfile() {
   // Replace with your actual user info from getServerSideProps or an API request //bg-[#030819]
-  const userName = "홍길동";
+
   const { profileData, user, fetchProfileData } = useUser();
+  const [inprogressData, setinprogressData] = useState([]);
+  const [pastData, setpastData] = useState([]);
+  const [showPayment, setshowPayment] = useState([]);
+
   useEffect(() => {
     fetchProfileData();
+    console.log("fetch profile data!");
   }, []);
+
+  useEffect(() => {
+    const past = profileData?.filter((data) => data?.Steps?.[4]?.isDone);
+    const inprogress = profileData?.filter((data) => !data?.Steps?.[4]?.isDone);
+    setpastData(past);
+    setinprogressData(inprogress);
+
+    inprogressData?.forEach((data) => {
+      if (data["Payment"]) {
+        console.log("why???");
+        if (!data["Payment"]["item_is_paid"]) {
+          setshowPayment((prev) => [...prev, true]);
+        } else if (
+          data["Payment"]["item_is_paid"] &&
+          !data["Payment"]["delivery_price"]
+        ) {
+          setshowPayment((prev) => [...prev, false]);
+        } else if (
+          data["Payment"]["item_is_paid"] &&
+          data["Payment"]["delivery_price"] &&
+          !data["Payment"]["delivery_is_paid"]
+        ) {
+          setshowPayment((prev) => [...prev, true]);
+        } else if (
+          data["Payment"]["item_is_paid"] &&
+          data["Payment"]["delivery_price"] &&
+          data["Payment"]["delivery_is_paid"]
+        ) {
+          setshowPayment((prev) => [...prev, false]);
+        }
+      } else {
+        console.log("normal");
+        setshowPayment((prev) => [...prev, false]);
+      }
+    });
+  }, [profileData]);
+  useEffect(() => {
+    console.log("showpay", showPayment);
+  }, [showPayment]);
 
   return (
     <div className="min-h-screen  text-white bg-gray-950 px-4 py-6">
@@ -90,14 +70,12 @@ export default function UserProfile() {
       <div className="max-w-4xl mx-auto mb-12 mt-10">
         <h3 className="text-3xl font-bold mb-0 font-myfont">진행 중인 주문</h3>
         <div className="space-y-4 mt-4">
-          {profileData && profileData.length > 0 ? (
-            profileData.map((order, index) => (
+          {inprogressData && inprogressData.length > 0 ? (
+            inprogressData.map((order, index) => (
               <GlowingInprogress
                 key={index}
                 profileData={order}
-                sampleInProgressOrders={sampleInProgressOrders}
-                // If you have additional props you want to pass for each order,
-                // you can add them here.
+                showPayment={showPayment[index]}
               />
             ))
           ) : (
@@ -109,22 +87,28 @@ export default function UserProfile() {
       {/* Past Orders */}
       <div className="max-w-3xl mx-auto">
         <h3 className="text-xl font-bold mb-4 font-myfont">지난 주문 내역</h3>
-        {samplePastOrders.length === 0 ? (
+        {pastData && pastData.length === 0 ? (
           <p className="text-gray-300">과거 주문이 없습니다.</p>
         ) : (
-          samplePastOrders.map((order) => (
+          pastData &&
+          pastData.map((order) => (
             <div
               key={order.id}
               className="mb-4 p-4 bg-[#2a2a2a] rounded-md flex items-center justify-between"
             >
               <div>
-                <p className="font-medium">{order.productName}</p>
+                <div>
+                  <p className="font-medium mb-4">name</p>
+                </div>
                 <p className="text-sm text-gray-400">
-                  주문일: {order.orderDate} / 배송완료일: {order.deliveredDate}
+                  주문일: {LocalTime(order["order_created_at"])}
+                </p>{" "}
+                <p className="text-sm text-gray-400">
+                  배송완료일: {LocalTime(order.Delivery["delivered_at"])}
                 </p>
               </div>
               <div className="text-sm font-semibold text-blue-500">
-                ${order.price.toLocaleString()}
+                {order.Payment["total_price"].toLocaleString()}원
               </div>
             </div>
           ))
@@ -134,7 +118,7 @@ export default function UserProfile() {
   );
 }
 
-const GlowingInprogress = ({ profileData, sampleInProgressOrders }) => {
+const GlowingInprogress = ({ profileData, showPayment }) => {
   return (
     <div className="flex items-center justify-center min-h-[300px] p-4 ">
       {" "}
@@ -159,7 +143,7 @@ const GlowingInprogress = ({ profileData, sampleInProgressOrders }) => {
             <div className="relative flex h-full flex-col justify-between md:gap-4 overflow-hidden rounded-xl">
               <div className="relative flex flex-1 flex-col justify-between gap-3">
                 <div className="space-y-1 md:p-4">
-                  {profileData.length === 0 ? (
+                  {profileData && profileData.length === 0 ? (
                     <p className="text-gray-950">진행 중인 주문이 없습니다.</p>
                   ) : (
                     <div
@@ -171,26 +155,28 @@ const GlowingInprogress = ({ profileData, sampleInProgressOrders }) => {
                       </h3>
                       <div className="space-y-1">
                         {console.log("profileDATAAAAAAA:", profileData)}
-                        {profileData.Steps.map((step, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center space-x-2 md:text-md "
-                          >
+                        {profileData &&
+                          profileData.Steps &&
+                          profileData.Steps.map((step, index) => (
                             <div
-                              className={`
+                              key={index}
+                              className="flex items-center space-x-2 md:text-md "
+                            >
+                              <div
+                                className={`
                         w-3 h-3 rounded-full 
                         ${step.isDone ? "bg-blue-500" : "bg-gray-500"}
                       `}
-                            />
-                            <span
-                              className={` ${step.isDone ? "text-black" : "text-gray-500"}`}
-                            >
-                              {step.label}
-                            </span>
+                              />
+                              <span
+                                className={` ${step.isDone ? "text-black" : "text-gray-500"}`}
+                              >
+                                {step.label}
+                              </span>
 
-                            {/* <div></div> */}
-                          </div>
-                        ))}
+                              {/* <div></div> */}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
@@ -199,12 +185,20 @@ const GlowingInprogress = ({ profileData, sampleInProgressOrders }) => {
             </div>
             <div>
               <div className="pl-[280px] flex flex-col absolute bottom-3">
-                {profileData.Steps[2].isDone ? (
+                {showPayment ? (
                   <div>
                     <div className="md:text-sm text-black">
                       주문일: {LocalTime(profileData.order_created_at)} <br />
                     </div>
-                    <button className="bg-blue-500 tex-black rounded-xl px-8">
+                    <button
+                      className="bg-blue-500 tex-black rounded-xl px-8 mb-2"
+                      onClick={() => {
+                        window.open(
+                          String(profileData.Payment["stripe_item_url"]),
+                          "_blank"
+                        );
+                      }}
+                    >
                       결제하기
                     </button>
                   </div>

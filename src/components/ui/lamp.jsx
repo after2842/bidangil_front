@@ -1,26 +1,88 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { GlowingEffect } from "./glowing-effect";
+import { useRouter } from "next/navigation";
 export default function LampDemo() {
-  const currentMonth = new Date().getMonth() + 1;
-  const freePerMonth = 200;
-  const freeComission = 124;
+  const [showEvent, setShowEvent] = useState(false);
+  const router = useRouter();
   return (
     <div>
       <LampContainer>
-        <div className="h-full flex flex-col flex item-center justify-center mt-[15%]">
-          <div className="text-white font-myfont text-5xl md:text-6x">
-            <p className="mb-10 text-center">{currentMonth}월 무료 수수료</p>
-          </div>
-          <h1 className="text-white font-myfont text-7xl text-center mb-24 ">
-            현재 {freeComission}명{" "}
-          </h1>
-          <div className="text-white font-semibold text-3xl text-center ">
-            {<RealTimeClock leftFree={"12"} />}
+        <div className="h-full mt-[500px]">
+          <div className="text-white font-myfont text-5xl md:text-6xl flex space-x-12">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="mb-10 text-center"
+              onClick={() => {
+                router.push("/community/review");
+              }}
+            >
+              리뷰
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="mb-10 text-center"
+              onClick={() => {
+                router.push("/community");
+              }}
+            >
+              커뮤니티
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="mb-10 text-center"
+              onClick={() => setShowEvent(true)}
+            >
+              이벤트
+            </motion.button>
           </div>
         </div>
+        <AnimatePresence>
+          {showEvent && (
+            <>
+              {/* backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black z-40"
+                onClick={() => setShowEvent(false)}
+              />
+
+              {/* card */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="fixed z-50 inset-0 flex items-center justify-center"
+              >
+                <div className="w-[90%] max-w-md rounded-2xl bg-white from-blue-600 to-cyan-500 text-white p-8 shadow-2xl">
+                  <h2 className="text-2xl font-bold mb-4 text-center text-black">
+                    한달 100명 선착순 EVENT
+                  </h2>
+                  <p className="text-lg leading-relaxed text-black">
+                    <span className="font-semibold">
+                      비단길을 이용하시는 모든 고객님께 달마다 100명
+                      <br /> 대행 수수료를 면제해드립니다.
+                    </span>
+                  </p>
+
+                  <button
+                    onClick={() => setShowEvent(false)}
+                    className="mt-6 w-full bg-blue-500 hover:bg-blue-600 rounded-xl py-2 font-semibold backdrop-blur-sm text-white border "
+                  >
+                    닫기
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         <motion.h1
           initial={{ opacity: 0.5, y: 100 }}

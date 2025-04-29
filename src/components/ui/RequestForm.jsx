@@ -17,19 +17,8 @@ export default function RequestForm({ forms, setforms }) {
   const handleChange = (index, field, value) => {
     const updateform = [...forms];
 
-    if (field === "price") {
-      const rawValue = value.replace(/,/g, "");
-      if (!/^\d*$/.test(rawValue)) {
-        setPriceWarn(true);
-        return;
-      }
-      setPriceWarn(false);
-      updateform[index][field] = Number(rawValue).toLocaleString();
-      setforms(updateform);
-    } else {
-      updateform[index][field] = value; //.field=> literally meaning the key named "field", not dynamically referring what field refers to
-      setforms(updateform);
-    }
+    updateform[index][field] = value; //.field=> literally meaning the key named "field", not dynamically referring what field refers to
+    setforms(updateform);
   };
   const addForms = () => {
     const newForms = [...forms, { url: "", desc: "", price: "" }];
@@ -89,28 +78,6 @@ export default function RequestForm({ forms, setforms }) {
                     value={form.desc}
                     onChange={(e) =>
                       handleChange(index, "desc", e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-              <div className="w-full mb-6">
-                {!showPriceWarn ? (
-                  <h id={`price${index}`} className="text-black text-sm">
-                    가격
-                  </h>
-                ) : (
-                  <h id={`price${index}`} className="text-blue-500 text-xs">
-                    숫자를 입력해주세요
-                  </h>
-                )}
-                <div className="p-[0.1px] rounded-lg w-1/4 shadow-sm">
-                  <InputOne
-                    id={`price-${index}`}
-                    placeholder="57,000원"
-                    type="text"
-                    value={form.price}
-                    onChange={(e) =>
-                      handleChange(index, "price", e.target.value)
                     }
                   />
                 </div>

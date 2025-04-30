@@ -15,10 +15,11 @@ import { useRouter } from "next/navigation";
 import { BottomGradient } from "@/components/ui/Login";
 import globeIcon from "../../assets/icons/globe.svg";
 import { AuroraBackground } from "./AuraBackground";
-import { Carousel } from "@/app/ai/page";
+
 import RequestForm from "./RequestForm";
 import Image from "next/image";
 import AddressAutocomplete from "./AddressAutoComp";
+import { apiFetch, wsUrl } from "@/lib/api";
 export default function Submit_2() {
   const router = useRouter();
   const { fetchCsrfToken } = useUser();
@@ -130,7 +131,7 @@ export default function Submit_2() {
     const csrf_token = await fetchCsrfToken();
 
     try {
-      const response = await fetch("http://localhost:8000/api/submit_order/", {
+      const response = await apiFetch("/api/submit_order/", {
         method: "POST",
         credentials: "include",
         headers: {

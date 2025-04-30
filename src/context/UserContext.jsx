@@ -6,13 +6,12 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-
+import { apiFetch, wsUrl } from "@/lib/api";
 const UserContext = createContext();
 
 async function fetchCsrfToken() {
-  const res = await fetch("http://localhost:8000/api/csrf_token/", {
+  const res = await apiFetch("/api/csrf_token/", {
     method: "GET",
-    credentials: "include",
   });
   const data = await res.json();
   return data.csrfToken;
@@ -59,12 +58,11 @@ export const UserProvider = ({ children }) => {
     try {
       const token = await fetchCsrfToken();
       setCsrfToken(token);
-      const response = await fetch("http://localhost:8000/api/login/", {
+      const response = await apiFetch("/api/login/", {
         method: "POST",
-        credentials: "include", //The client's browser should handle cookies (csrf cookie & login cookie)
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
+          "X-CSRFToken": token,
         },
         body: JSON.stringify({
           userpassword: userpassword,
@@ -97,20 +95,22 @@ export const UserProvider = ({ children }) => {
       setError(null);
       const token = await fetchCsrfToken();
       setCsrfToken(token);
-      const response = await fetch("http://localhost:8000/api/profile_info/", {
+      const response = await apiFetch("/api/profile_info/", {
         method: "GET",
-        credentials: "include",
+
         headers: {
           "X-CSRFToken": csrfToken,
         },
       });
 
       if (!response.ok) {
-        throw new Error(`Error fetching profile info: ${res.statusText}`);
+        throw new Error(`Error fetching profile info: ${response.statusText}`);
       }
 
       const data = await response.json();
       setProfileData(data["data"]);
+      console.log("&&&&&&&&");
+      console.log("data///", data["data"]);
     } catch (err) {
       console.error("Profile fetch error:", err);
       setError(err.message);
@@ -125,16 +125,13 @@ export const UserProvider = ({ children }) => {
       setError(null);
       const token = await fetchCsrfToken();
       setCsrfToken(token);
-      const response = await fetch(
-        "http://localhost:8000/api/community_profile/",
-        {
-          method: "GET",
-          credentials: "include", // sends cookies for session
-          headers: {
-            "X-CSRFToken": csrfToken,
-          },
-        }
-      );
+      const response = await apiFetch("/api/community_profile/", {
+        method: "GET",
+        //credentials: "include", // sends cookies for session
+        headers: {
+          "X-CSRFToken": csrfToken,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Error fetching profile info: ${res.statusText}`);

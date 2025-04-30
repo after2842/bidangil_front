@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
-
+import { apiFetch } from "@/lib/api";
 const MAX_FILES = 5;
 
 export default function WritePost() {
@@ -74,7 +74,7 @@ export default function WritePost() {
       console.log(pair[0] + ": " + pair[1]);
     }
 
-    const res = await fetch("http://localhost:8000/api/community/post/", {
+    const res = await apiFetch("/api/community/post/", {
       method: "POST",
       credentials: "include",
       headers: { "X-csrftoken": csrf }, // DON’T set Content-Type

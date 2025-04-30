@@ -72,7 +72,12 @@ const Navbar = ({ clickSideMenu, communityProfile }) => {
         <button className=" px-4 mt-4 text-blue-500">리뷰</button>
         <button className=" px-4 mt-4">나눔</button>
         <button className=" px-4 mt-4">한국-미국</button>
-        <button className=" px-4 mt-4 hover:text-blue-500">
+        <button
+          className=" px-4 mt-4 hover:text-blue-500"
+          onClick={() => {
+            router.push("/form");
+          }}
+        >
           구매대행 신청
         </button>
       </div>

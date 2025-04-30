@@ -4,7 +4,7 @@ import { useUser } from "@/context/UserContext";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { apiFetch, wsUrl } from "@/lib/api";
 export default function Createavatar() {
   const router = useRouter();
   const [page, setpage] = useState(1);
@@ -58,7 +58,7 @@ export default function Createavatar() {
 
     const payload = { species: answer[0], personality: personality };
     try {
-      const response = await fetch("http://localhost:8000/api/create_avatar/", {
+      const response = await apiFetch("/api/create_avatar/", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -88,7 +88,7 @@ export default function Createavatar() {
   useEffect(() => {
     try {
       console.log("websocket connecting..");
-      const socket = new WebSocket("ws://localhost:8000/ws/avatars/");
+      const socket = new WebSocket(wsUrl("/ws/avatars/"));
       console.log("websocket connected");
 
       socket.onmessage = (event) => {

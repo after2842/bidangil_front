@@ -352,7 +352,13 @@ const ReviewCard = ({ reviewData }) => {
             <p>{nickname}</p>
             <div className="flex">
               {Array.from({ length: rating }).map(() => (
-                <Image src="/svgs/star.svg" width={20} height={20} alt="star" />
+                <Image
+                  src="/svgs/star.svg"
+                  width={20}
+                  height={20}
+                  alt="star"
+                  key={"star"}
+                />
               ))}
             </div>
             <div className="text-[10px] mt-1 ml-1">{formatDate(date)}</div>
@@ -364,12 +370,14 @@ const ReviewCard = ({ reviewData }) => {
       </div>
       <div className="mt-2 ml-2 flex">
         {images &&
-          images.map((image) => (
+          images.map((image, index) => (
             <img
               src={image.image_url}
               width={200}
               height={200}
               className="mr-4"
+              alt="usr_image"
+              key={index}
             />
           ))}
       </div>

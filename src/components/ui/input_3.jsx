@@ -183,6 +183,7 @@ const InputHalf = React.forwardRef(({ className, type, ...props }, ref) => {
     </motion.div>
   );
 });
+InputOne.displayName = "InputOne";
 InputHalf.displayName = "Input";
 InputThird.displayName = "Input";
 InputTwoThird.displayName = "Input";

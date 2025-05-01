@@ -302,7 +302,8 @@ const Review = () => {
 
   return (
     <div>
-      {reviews && reviews.map((review) => <ReviewCard reviewData={review} />)}
+      {reviews &&
+        reviews.map((review, i) => <ReviewCard reviewData={review} key={i} />)}
       <div className="w-full">
         <div className="flex mt-12 mb-4 justify-between">
           {page !== 1 ? (

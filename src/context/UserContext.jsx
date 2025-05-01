@@ -40,13 +40,13 @@ export const UserProvider = ({ children }) => {
         const token = await fetchCsrfToken();
         console.log("token", token);
         setCsrfToken(token);
-        console.log(`csrf:${csrfToken}`);
+        console.log(`csrf:${token}`);
       } catch (error) {
         console.error("CSRF token fetch error:", error);
       }
     };
     getToken();
-  }, []);
+  }, [fetchCsrfToken]);
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -76,9 +76,9 @@ export const UserProvider = ({ children }) => {
       }
 
       const result = await response.json();
-      console.log("result", result);
-      console.log("result.data", result.data);
-      console.log("result.data.nickname", result.data.nickname);
+      // console.log("result", result);
+      // console.log("result.data", result.data);
+      // console.log("result.data.nickname", result.data.nickname);
       setUser(result.data);
       localStorage.setItem("user", JSON.stringify(result.data));
       console.log("userinfo", user.nickname);
@@ -134,7 +134,7 @@ export const UserProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Error fetching profile info: ${res.statusText}`);
+        throw new Error(`Error fetching profile info: ${response.statusText}`);
       }
 
       const data = await response.json();

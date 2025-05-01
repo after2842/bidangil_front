@@ -315,7 +315,7 @@ const ControlPanel = ({
                 forms.map(
                   (form, index) =>
                     form.desc !== "" && (
-                      <div className="mt-2 w-full">
+                      <div className="mt-2 w-full" key={index}>
                         <button
                           onClick={() => window.open(form.url, "_blank")}
                           className="w-full border rounded-lg bg-white p-2 shadow-md mb-4  "
@@ -401,10 +401,10 @@ const FinalSummary = ({ forms, address }) => {
 
         {forms &&
           forms.map(
-            (form, iindex) =>
+            (form, index) =>
               form.url &&
               form.desc && (
-                <div className="flex flex-col ">
+                <div className="flex flex-col " key={index}>
                   <div className="ml-2 text-left mb-4">
                     <div className="flex items-left">
                       <p

@@ -84,7 +84,7 @@ export default function Createavatar() {
       console.log("sent!");
       handleSubmit();
     }
-  }, [page]);
+  }, [page, handleSubmit]);
   useEffect(() => {
     try {
       console.log("websocket connecting..");
@@ -236,8 +236,8 @@ const QuestionAvatar = ({
             <div className="mt-24 text-3xl ">
               <h>
                 <span className="text-blue-500 text-3xl">Q2.</span> 친구가
-                갑자기 "깜짝 여행 가자!"고 제안한다. 출발은 내일 아침이다.
-                당신은?
+                갑자기 &quot;깜짝 여행 가자!&quot;고 제안한다. 출발은 내일
+                아침이다. 당신은?
               </h>
             </div>
             <div className="flex flex-col space-y-3 mt-24 items-start text-xl">
@@ -266,7 +266,7 @@ const QuestionAvatar = ({
                   answerClicked(e.currentTarget.value);
                 }}
               >
-                3. "미리 말해줬어야지!" 하고 거절한다.
+                3. &quot;미리 말해줬어야지!&quot; 하고 거절한다.
               </button>
               <button
                 value="4"
@@ -289,8 +289,8 @@ const QuestionAvatar = ({
                 동창회에서 마이크가 넘어왔다.
               </h>
               <h>
-                즉석에서 “근황 & 앞으로의 목표”를 2분 내로 말해달라는 요청!
-                당신은?
+                즉석에서 &quot;근황 & 앞으로의 목표&quot;를 2분 내로 말해달라는
+                요청! 당신은?
               </h>
             </div>
             <div className="flex flex-col space-y-3 mt-24 items-start text-xl">
@@ -315,7 +315,7 @@ const QuestionAvatar = ({
               >
                 <p>
                   2. 연도별 커리어 지표(회사·포지션·사이드프로젝트)를 요약한
-                  5-컷 슬라이드를 휴대폰으로 띄워 ‘팩트 중심’ 보고.
+                  5-컷 슬라이드를 휴대폰으로 띄워 &apos;팩트 중심&apos; 보고.
                 </p>
               </button>
               <button
@@ -326,8 +326,9 @@ const QuestionAvatar = ({
                 }}
               >
                 <p>
-                  3. 핵심 키워드 세 개(예: ‘이직·결혼·마라톤’)만 던지고 “끝나고
-                  술자리에서 자세히!”라며 마이크를 넘긴다.
+                  3. 핵심 키워드 세 개(예: &apos;이직·결혼·마라톤&apos;)만
+                  던지고 &apos;끝나고 술자리에서 자세히!&apos; 라며 마이크를
+                  넘긴다.
                 </p>
               </button>
               <button
@@ -338,8 +339,8 @@ const QuestionAvatar = ({
                 }}
               >
                 <p>
-                  4. 얼굴이 빨개지며 머뭇대다 진행자에게 “다음 사람 먼저…”라고
-                  부탁, 뒤에서 메모를 준비해 순서를 미룬다.
+                  4. 얼굴이 빨개지며 머뭇대다 진행자에게 &quot;다음 사람
+                  먼저…&quot;라고 부탁, 뒤에서 메모를 준비해 순서를 미룬다.
                 </p>
               </button>
             </div>
@@ -350,8 +351,8 @@ const QuestionAvatar = ({
             {" "}
             <div className="mt-24 text-3xl flex flex-col">
               <h>
-                <span className="text-blue-500 text-3xl">Q4.</span> 당신은 ‘나의
-                하루를 영상으로’ 학교 과제를 받았다. <br />
+                <span className="text-blue-500 text-3xl">Q4.</span> 당신은
+                &apos;나의 하루를 영상으로&apos; 학교 과제를 받았다. <br />
                 사용 가능한 장비는 스마트폰과 간단한 편집 앱뿐. 제출 기한은
                 내일이다. 당신의 계획은?
               </h>
@@ -402,7 +403,7 @@ const QuestionAvatar = ({
               >
                 <p>
                   4. 촬영은 간단히 두어 컷만 찍어두고, 마감 직전에 효과·자막·밈
-                  이미지를 집중 삽입해 ‘짧고 임팩트 있게’ 완성한다.
+                  이미지를 집중 삽입해 &apos;짧고 임팩트 있게&apos; 완성한다.
                 </p>
               </button>
             </div>

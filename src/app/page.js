@@ -12,7 +12,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Pricing from "@/components/ui/Pricinig";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-
+import LandingHero from "@/components/ui/LandingHero";
 const ContainerTextFlip = dynamic(
   () =>
     import("@/components/ui/container-text-flip").then((mod) => mod.default),
@@ -101,41 +101,7 @@ export default function Home() {
     <div className="w-full relative">
       {/* Section 1 with top background image */}
       <FloatingNavbar></FloatingNavbar>
-      <section
-        className="h-screen bg-cover bg-center filter brightness-150"
-        style={{ backgroundImage: "url('/images/main_image.jpg')" }}
-      >
-        <div className="h-full bg-black/30 flex items-center items-center flex flex-col space-y-10 pt-[200px]">
-          {/* <h1 className="text-white text-9xl font-bold font-myfont">비단길</h1> */}
-
-          <p className="text-white text-4xl md:text-5xl pt-[10px] font-myfont">
-            한국에 있는 것처럼,
-            <br className="block md:hidden" /> 모든 쇼핑몰 이용해요
-          </p>
-          <p className="hidden md:block text-white text-[20px] md:text-5xl pt-[10px] font-myfont">
-            인증 없이 절차 없이 빠르게
-          </p>
-          <div className="text-blue-500 text-xl md:text-5xl font-myfont pt-[50px]">
-            <span className=" text-white">한국에서 </span>{" "}
-            <ContainerTextFlip className="text-blue-500" />
-            <span className="text-white">찾고 계신가요?</span>
-          </div>
-
-          <div className="pt-[60px]">
-            <div>
-              <button
-                className="bg-white border border-blue-500 rounded-full px-4 py-2 text-xl md:px-6 md:py-4 hover:bg-blue-500 md:text-2xl font-myfont"
-                onClick={() => {
-                  router.push("/form");
-                }}
-              >
-                지금 주문하기
-              </button>
-              {/* <GlowingButton></GlowingButton> */}
-            </div>
-          </div>
-        </div>
-      </section>
+      <LandingHero />
       <section
         className="
             h-screen

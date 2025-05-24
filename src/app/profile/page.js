@@ -1,14 +1,13 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
-import { Sparkles } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useEffect } from "react";
 
 export default function UserProfile() {
   // Replace with your actual user info from getServerSideProps or an API request //bg-[#030819]
 
-  const { profileData, user, fetchProfileData } = useUser();
+  const { profileData, fetchProfileData, userNickname } = useUser();
   const [inprogressData, setinprogressData] = useState([]);
   const [pastData, setpastData] = useState([]);
   const [showPayment, setshowPayment] = useState([]);
@@ -26,7 +25,6 @@ export default function UserProfile() {
 
     inprogressData?.forEach((data) => {
       if (data["Payment"]) {
-        console.log("why???");
         if (!data["Payment"]["item_is_paid"]) {
           setshowPayment((prev) => [...prev, true]);
         } else if (
@@ -62,7 +60,7 @@ export default function UserProfile() {
       {/* Welcome Banner */}
       <div className="max-w-3xl mx-auto mb-6">
         <h2 className="text-2xl font-semibold font-myfont text-center">
-          {user && user.nickname + " 님 안녕하세요"}
+          {userNickname && userNickname + "님 안녕하세요"}
         </h2>
       </div>
 

@@ -26,7 +26,7 @@ export default function RequestForm({ forms, setforms }) {
   };
   const [showPriceWarn, setPriceWarn] = useState(false);
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full overflow-y-auto scrollbar-hide ">
       <div className="shadow-input text-white mx-auto max-w-2xl w-full rounded-xl bg-white p-4 md:p-4 dark:bg-black mt-4 ">
         <form className="my-6 mx-6 text-left">
           {" "}

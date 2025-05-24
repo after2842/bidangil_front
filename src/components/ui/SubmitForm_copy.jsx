@@ -62,34 +62,7 @@ export default function Submit_2() {
     // join the main parts with commas
     return parts.join(", ");
   };
-  // const validateAddress = async ({ address }) => {
-  //   const csrf_token = await fetchCsrfToken();
-  //   try {
-  //     const response = await fetch(
-  //       "http://localhost:8000/api/validate_address/",
-  //       {
-  //         method: "POST",
-  //         credentials: "include",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "X-csrftoken": csrf_token,
-  //         },
-  //         body: JSON.stringify(address),
-  //       }
-  //     );
-  //     const result = await response.json();
-  //     console.log(`result status: ${result["result"]}`);
-  //     if (response.status === 200) {
-  //       console.log(`RESULTTT:${result["result"]}`);
-  //       return result["result"];
-  //     } else {
-  //       alert("서버 오류가 발생했습니다.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     alert("네트워크 오류가 발생했습니다.");
-  //   }
-  // };
+
   const nextPage = async ({ index }) => {
     if (index === 1) {
       if (
@@ -159,7 +132,7 @@ export default function Submit_2() {
 
   return (
     <div className="h-screen w-full bg-gray-950 bg-center flex items-center justify-center ">
-      <div className="w-[65%] h-[85vh] bg-white rounded-2xl text-center p-2 shadow-xl border">
+      <div className="h-screen w-full md:w-[65%] md:h-[85vh] bg-white rounded-2xl text-center p-2 shadow-xl border">
         <div
           className="
     grid grid-rows-[auto_auto_1fr_auto_auto] 
@@ -185,7 +158,7 @@ export default function Submit_2() {
           <div className="md:col-span-7 md:row-span-1 bg-white text-3xl font-bold text-black font-myfont mt-4">
             {title.length > 0 && title[currentPage - 1]}
           </div>
-          <div className="md:col-span-7 md:row-span-4 overflow-y-auto scrollbar-hide h-full">
+          <div className="md:col-span-7 md:row-span-4 md:overflow-y-auto scrollbar-hide h-full">
             <WriteForm
               currentPage={currentPage}
               address={address}
@@ -196,7 +169,7 @@ export default function Submit_2() {
           </div>
           <div className="md:col-span-7 md:row-span-1">
             {" "}
-            <div className="flex items-center justify-center md:gap-[400px]">
+            <div className="flex items-center justify-center gap-[150px] md:gap-[400px]">
               {/* This button only appears if currentPage !== 1 */}
               {currentPage !== 1 && (
                 <button
@@ -254,14 +227,14 @@ const ControlPanel = ({
   const googleAddress = formatAddressString(address);
 
   return (
-    <div className="w-full h-full rounded-lg bg-gray-100 flex flex-col px-2 relative">
+    <div className=" md:w-full md:h-full rounded-lg bg-gray-100 flex flex-col px-2 pb-12 relative">
       <div className="mx-auto w-full">
         <div className=" text-sm">
           {/* <div className="justify center font-myfont mt-4">주문 내역</div> */}
           <div className=" w-full flex flex-col">
             {currentPage === 1 && (
               <div>
-                <div className="mt-2 flex justify-start">
+                <div className="hidden md:flex mt-2 justify-start">
                   <button
                     onClick={() => {
                       router.push("/");
@@ -275,8 +248,8 @@ const ControlPanel = ({
                     />
                   </button>
                 </div>
-                <div className="mt-[100px]">
-                  <div className="flex ml-2 mb-4">
+                <div className="md:mt-[100px]">
+                  <div className="hidden md:flex ml-2 mb-4">
                     <Image
                       src="/images/alert.png"
                       alt="alert"
@@ -286,7 +259,7 @@ const ControlPanel = ({
                     />
                     <h className="ml-1 text-[17px]"> 환율</h>
                   </div>
-                  <div className="flex ml-2 mb-4">
+                  <div className="hidden md:flex ml-2 mb-4">
                     <Image
                       src="/images/alert.png"
                       alt="alert"
@@ -301,7 +274,7 @@ const ControlPanel = ({
                     setAddress={setAddress}
                   />
                   {showMissingModal && (
-                    <div className="mt-24 flex absolute bottom-12 left-0 w-full justify-center">
+                    <div className="mt-24 flex absolute bottom-2 md:bottom-12 left-0 w-full justify-center">
                       <h className="text-blue-500">모든 정보를 입력해주세요</h>
                     </div>
                   )}
@@ -310,7 +283,8 @@ const ControlPanel = ({
                 </div>
               </div>
             )}
-            <div className="mt-12">
+
+            <div className=" hidden md:block mt-12">
               {currentPage === 2 &&
                 forms.map(
                   (form, index) =>
@@ -375,19 +349,6 @@ const WriteForm = ({ currentPage, address, setAddress, forms, setforms }) => {
         <FinalSummary forms={forms} address={address}></FinalSummary>
       ) : null}
     </div>
-  );
-};
-
-function LabelInputContainer({ children, className }) {
-  return <div className={cn("flex flex-col", className)}>{children}</div>;
-}
-
-const BottomGradientBlue = () => {
-  return (
-    <>
-      <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
-      <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
-    </>
   );
 };
 

@@ -39,7 +39,7 @@ export function AddressScreen({ address, setAddress }) {
 
   return (
     <div className="w-full h-full">
-      <div className="shadow-input text-white mx-auto max-w-2xl w-full rounded-xl bg-white p-4 md:p-4 dark:bg-black mt-4 ">
+      <div className="hidden md:block shadow-input text-white mx-auto max-w-2xl w-full rounded-xl bg-white p-4 md:p-4 dark:bg-black mt-4 ">
         {/* Title */}
 
         <form className="my-4 mx-6 text-left " onSubmit={handleSubmit}>
@@ -125,6 +125,115 @@ export function AddressScreen({ address, setAddress }) {
             </div>
             {/* Address Line 2 (optional) */}
             <div className="flex flex-col w-1/3">
+              <h id="phone" className="text-black">
+                전화번호 <span className="text-[12px] "></span>
+              </h>
+              <InputOne
+                id="phone"
+                placeholder="1112223333"
+                type="text"
+                value={address.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
+            </div>
+          </div>
+          {/* Display error if any */}
+          {error && (
+            <div className="mb-4 text-sm font-semibold text-red-600">
+              {error}
+            </div>
+          )}
+
+          {/* Submit Button */}
+        </form>
+      </div>
+      <div className="block md:hidden shadow-input w-full rounded-xl p-2 dark:bg-black mt-4">
+        {/* Title */}
+
+        <form className="my-4 mx-6 text-left " onSubmit={handleSubmit}>
+          {/* Address Line 1 */}
+          <div className="flex flex-col w-full ">
+            <div className="flex flex-col w-full ">
+              <h id="addressLine1" className="text-black">
+                주소 1
+              </h>
+              <InputOne
+                id="addressLine1"
+                placeholder="123 Main St."
+                type="text"
+                value={address.addressLine1}
+                onChange={(e) => handleChange("addressLine1", e.target.value)}
+              />
+            </div>
+            {/* Address Line 2 (optional) */}
+            <div className="flex flex-col w-1/2 mt-2 ">
+              <h id="addressLine2" className="text-black">
+                주소 2
+              </h>
+              <InputOne
+                id="addressLine2"
+                placeholder="Apt, Suite, etc."
+                type="text"
+                value={address.addressLine2}
+                onChange={(e) => handleChange("addressLine2", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex w-full mt-6 space-x-2">
+            <div className="flex flex-col w-1/2">
+              <h id="city" className="text-black">
+                도시<span className="text-[12px] ">(city)</span>
+              </h>
+              <InputOne
+                id="city"
+                placeholder="Los Angeles"
+                type="text"
+                value={address.city}
+                onChange={(e) => handleChange("city", e.target.value)}
+              />
+            </div>
+            {/* Address Line 2 (optional) */}
+            <div className="flex flex-col w-1/3">
+              <h id="state" className="text-black">
+                주<span className="text-[12px] ">(state)</span>
+              </h>
+              <InputOne
+                id="state"
+                placeholder="Apt, Suite, etc."
+                type="text"
+                value={address.state}
+                onChange={(e) => handleChange("state", e.target.value)}
+              />
+            </div>{" "}
+          </div>
+          <div className="flex flex-col w-1/2 mt-2">
+            <h id="zip" className="text-black">
+              우편번호 <span className="text-[12px] ">(zip code)</span>
+            </h>
+            <InputOne
+              id="zip"
+              placeholder="Apt, Suite, etc."
+              type="text"
+              value={address.zip}
+              onChange={(e) => handleChange("zip", e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col w-full mt-16">
+            <div className="flex flex-col w-full">
+              <h id="addressLine1" className="text-black">
+                이름
+              </h>
+              <InputOne
+                id="name"
+                placeholder="name"
+                type="text"
+                value={address.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+              />
+            </div>
+            {/* Address Line 2 (optional) */}
+            <div className="flex flex-col w-full mt-2">
               <h id="phone" className="text-black">
                 전화번호 <span className="text-[12px] "></span>
               </h>

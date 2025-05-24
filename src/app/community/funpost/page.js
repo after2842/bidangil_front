@@ -1,52 +1,31 @@
 "use client";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { useState } from "react";
+import { useEffect } from "react";
+import { apiFetch, wsUrl } from "@/lib/api";
+import { useRef } from "react";
+import Link from "next/link";
 
-export default function Community({ searchParams }) {
-  const { fetchCommunityInfo, communityProfile, csrfToken } = useUser();
+export default function Funpost({ searchParams }) {
+  const { csrfToken, fetchCommunityInfo, communityProfile } = useUser();
+  const [posts, setposts] = useState([]);
   const [toggleSideMenu, setToggleSideMenu] = useState(false);
   const [toggleEditProfile, setToggleEditProfile] = useState(false);
+  const router = useRouter();
   const page = Number(searchParams.page ?? 1);
-  const perPage = 12; // posts per page
+  const perPage = 10; // posts per page
   const [totalPages, setTotalPages] = useState(1);
-  const [reviews, setReviews] = useState([]);
-
-  const [hasNext, setHasNext] = useState(true);
+  const [toggleFilters, setToggleFilters] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedMeetup, setSelectedMeetup] = useState(null);
+  const dropdownRef = useRef(null);
+  const filterButtonRef = useRef(null);
+  const sidemenuRef = useRef(null);
   const [toggleMyposts, setToggleMyposts] = useState(false);
-  async function loadPage() {
-    const res = await apiFetch(
-      `/api/get_reviews/?page=${page}&size=${perPage}`
-    );
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Server returned", res.status, text);
-      alert("요청 실패 (" + res.status + ")");
-      return;
-    }
-    const json = await res.json(); //parse
 
-    setReviews(json.results); // first page replaces
-    setTotalPages(Number(json.total_pages) + 1);
-
-    setHasNext(json.has_next);
-  }
-  useEffect(() => {
-    console.log("avatar called");
-    fetchCommunityInfo();
-    loadPage();
-  }, []);
-  const clickMyprofile = () => {
-    if (toggleEditProfile) {
-      setToggleEditProfile(false);
-    } else {
-      setToggleEditProfile(true);
-    }
-  };
   const clickSideMenu = () => {
     if (toggleSideMenu) {
       setToggleSideMenu(false);
@@ -54,53 +33,166 @@ export default function Community({ searchParams }) {
       setToggleSideMenu(true);
     }
   };
+  const fetchposts = async () => {
+    console.log("fetching...");
+    const response = await apiFetch(
+      `/api/posts/?page=${page}&size=${perPage}&filter=${selectedFilter}`,
+      {
+        method: "GET",
+        //credentials: "include", // sends cookies for session
+        headers: {
+          "X-CSRFToken": csrfToken,
+        },
+      }
+    );
+
+    const data = await response.json();
+    setposts(data["results"]);
+    setTotalPages(data["total_pages"] + 1);
+  };
+
+  useEffect(() => {
+    fetchposts();
+    console.log("current page : ", page);
+  }, [searchParams, selectedFilter]);
+
+  useEffect(() => {
+    fetchCommunityInfo();
+
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        if (
+          filterButtonRef.current &&
+          !filterButtonRef.current.contains(e.target)
+        ) {
+          console.log("settogglefilter fired🔥");
+          setToggleFilters(false);
+        }
+      }
+      if (sidemenuRef.current && !sidemenuRef.current.contains(e.target)) {
+        setToggleSideMenu(false);
+      }
+    };
+    document.addEventListener("mouseup", handleClickOutside);
+    //return () => document.removeEventListener("mouseup", handleClickOutside);
+  }, []);
+
   return (
-    <div className="relative h-screen w-full bg-white">
+    <div className="w-full h-screen">
       <Navbar
-        clickSideMenu={clickSideMenu}
         communityProfile={communityProfile}
+        clickSideMenu={clickSideMenu}
       />
-      <div className={`${toggleEditProfile ? "blur-md" : ""} transition-all`}>
-        <div className=" flex justify-center">
-          <div className="mt-16 w-3/5 h-full bg-white rounded-2xl p-4 ">
-            <Review reviews={reviews} page={page} totalPages={totalPages} />
+      <div className="absolute right-2 mt-1 w-[200px]">
+        {toggleSideMenu && (
+          <div ref={sidemenuRef}>
+            <Sidemenu
+              setToggleEditProfile={setToggleEditProfile}
+              setToggleMyposts={setToggleMyposts}
+            />
           </div>
-          <div className="absolute right-2 mt-1 w-[200px]">
-            {toggleSideMenu && (
-              <Sidemenu
-                clickMyprofile={clickMyprofile}
-                setToggleMyposts={setToggleMyposts}
+        )}
+      </div>
+      <div className=" ">
+        {" "}
+        <div className="w-full flex justify-center mt-12">
+          <div className="w-2/5 flex flex-col justify-center items-center  ">
+            <div
+              className="relative w-full flex flex-row items-center"
+              ref={filterButtonRef}
+            >
+              <input
+                className=" w-full relative shadow-md  rounded rounded-xl px-16 text-center border py-1"
+                placeholder="검색해보세요"
               />
+              <button
+                className="absolute right-2 rounded-full px-1 text-xs text-gray-700"
+                onClick={() => setToggleFilters(!toggleFilters)}
+              >
+                ▼
+              </button>
+            </div>
+            {toggleFilters && (
+              <>
+                {" "}
+                <div
+                  className={` w-full items-center flex justify-start p-2 mt-4 flex flex-col`}
+                  ref={dropdownRef}
+                >
+                  <div className="flex flex flex-row  gap-6">
+                    <button
+                      className={`border rounded rounded-lg px-4 mb-2 shadow-sm hover:border-blue-300 ${selectedFilter === "chat" && "bg-blue-300 text-white"}`}
+                      onClick={() => setSelectedFilter("chat")}
+                    >
+                      수다
+                    </button>
+                    <button
+                      className={`border rounded rounded-lg px-4 mb-2 shadow-sm hover:border-blue-300 ${selectedFilter === "meetup" && "bg-blue-300 text-white"}`}
+                      onClick={() => setSelectedFilter("meetup")}
+                    >
+                      모임
+                    </button>
+                    <button
+                      className={`border rounded rounded-lg px-4 mb-2 shadow-sm hover:border-blue-300 ${selectedFilter === "share" && "bg-blue-300 text-white"}`}
+                      onClick={() => setSelectedFilter("share")}
+                    >
+                      나눔
+                    </button>
+                    <button
+                      className={`border rounded rounded-lg px-4 mb-2 shadow-sm hover:border-blue-300 ${selectedFilter === "food" && "bg-blue-300 text-white"}`}
+                      onClick={() => setSelectedFilter("food")}
+                    >
+                      맛집
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
       </div>
-      <Paginator page={page} totalPages={totalPages} />
+      <div className="w-full flex justify-center">
+        <div className=" mt-6 w-3/5 h-full bg-white rounded-2xl p-4">
+          {posts.map((post, index) => (
+            <div key={index}>
+              <PreviewFun post={post} />
+            </div>
+          ))}
+        </div>
+      </div>{" "}
+      {/* Paginator */}
+      <div className="flex flex-col">
+        <Paginator page={page} totalPages={totalPages} />
+      </div>{" "}
       {toggleEditProfile && (
         <EditProfile
-          clickMyprofile={clickMyprofile}
+          fetchCommunityInfo={fetchCommunityInfo}
           communityProfile={communityProfile}
           setToggleEditProfile={setToggleEditProfile}
           csrfToken={csrfToken}
-          fetchCommunityInfo={fetchCommunityInfo}
         />
       )}
       {toggleMyposts && (
-        <Myposts csrfToken={csrfToken} setToggleMyposts={setToggleMyposts} />
+        <Myposts
+          post={posts}
+          csrfToken={csrfToken}
+          setToggleMyposts={setToggleMyposts}
+        />
       )}
     </div>
   );
 }
+
 function Paginator({ page, totalPages }) {
   const router = useRouter();
   return (
-    <div className="mt-8 flex justify-center items-center gap-2 text-sm  pb-16">
+    <div className="mt-8 flex justify-center items-center gap-2 text-sm mb-16">
       {[...Array(totalPages)].map((_, i) => {
         const p = i + 1;
         return (
           <button
             key={p}
-            onClick={() => router.push(`/community/review?page=${p}`)}
+            onClick={() => router.push(`/community/funpost?page=${p}`)}
             className={`px-3 py-1 rounded rounded-full ${
               p === page ? "bg-blue-500 text-white" : ""
             }`}
@@ -112,6 +204,92 @@ function Paginator({ page, totalPages }) {
     </div>
   );
 }
+
+const PreviewFun = ({ post }) => {
+  const router = useRouter();
+  let image = {};
+  if (post.images.length == 0) {
+    image.image_url =
+      "https://bidangilimage.s3.us-west-1.amazonaws.com/posts/thumb.png";
+  } else {
+    image = post.images[0];
+  }
+
+  return (
+    <div
+      className={`relative w-full mt-8 px-8 border rounded rounded-md flex h-[100px]`}
+    >
+      {/* Title aligned left */}
+      {image && (
+        <img
+          src={image.image_url}
+          width={100}
+          height={100}
+          alt="usr_image"
+          key={post.slug}
+          className="object-cover"
+        />
+      )}
+      <div className="items-center flex justify-center ml-12">
+        <button
+          className="hover:text-blue-500 text-lg"
+          onClick={() => router.push(`funpost/${post.slug}`)}
+        >
+          {post.title}
+        </button>
+        <div className="text-blue-500 ml-4">
+          {post.category && post.subcategory === "meetup" && (
+            <>
+              {"["}
+              {post.meetuptype}
+              {"]"}
+            </>
+          )}{" "}
+          {post.category && post.subcategory === "food" && (
+            <>
+              {"["}
+              {"맛집"}
+              {"]"}
+            </>
+          )}
+          {post.category === "share" && (
+            <>
+              {"["}
+              {"나눔"}
+              {"]"}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Absolute right author section */}
+      <motion.button
+        className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center hover:text-blue-500"
+        onClick={() => router.push("/funpost/share")}
+      >
+        {" "}
+        <img
+          src={post.avatar}
+          width={35}
+          height={35}
+          className="rounded-full object-cover"
+        />
+        <div>
+          <p className="ml-2 text-xs">{post.user_nickname}</p>
+        </div>
+      </motion.button>
+    </div>
+  );
+};
+function formatDate(dateString) {
+  const date = new Date(dateString); // parse to Date object
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is 0-based
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${month}월 ${day}일 ${year}`;
+}
+
 const Navbar = ({ clickSideMenu, communityProfile }) => {
   const router = useRouter();
   return (
@@ -127,17 +305,12 @@ const Navbar = ({ clickSideMenu, communityProfile }) => {
 
       <div className="flex font-myfont text-xl">
         <button
-          className=" px-4 mt-4 text-blue-500"
+          className=" px-4 mt-4 hover:text-blue-500"
           onClick={() => router.push("/community/review")}
         >
           리뷰
         </button>
-        <button
-          className=" px-4 mt-4 hover:text-blue-500"
-          onClick={() => router.push("/community/funpost")}
-        >
-          이야기
-        </button>
+        <button className=" px-4 mt-4 text-blue-500">이야기</button>
         <button
           className=" px-4 mt-4 hover:text-blue-500"
           onClick={() => {
@@ -171,6 +344,87 @@ const Navbar = ({ clickSideMenu, communityProfile }) => {
             로그인
           </button>
         )}{" "}
+      </div>
+    </div>
+  );
+};
+
+const Sidemenu = ({ setToggleEditProfile, setToggleMyposts }) => {
+  const router = useRouter();
+  return (
+    <div className=" rounded-xl flex flex-col items-start space-y-4 border shadow-md p-2">
+      <div className="flex">
+        <svg
+          width="16"
+          height="17"
+          viewBox="0 -5 16 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M11 5C11 6.65685 9.65685 8 8 8C6.34315 8 5 6.65685 5 5C5 3.34315 6.34315 2 8 2C9.65685 2 11 3.34315 11 5ZM13 5C13 7.76142 10.7614 10 8 10C5.23858 10 3 7.76142 3 5C3 2.23858 5.23858 0 8 0C10.7614 0 13 2.23858 13 5ZM3.02448 10.2903C3.16276 10.1835 3.33034 10.1177 3.50495 10.1118C4.01604 10.0945 4.27556 10.2136 4.47518 10.4393C4.86035 10.8748 4.60724 11.5818 4.1542 11.9462C3.32132 12.616 2.67734 13.4973 2.30604 14.4998H13.693C13.3218 13.4975 12.678 12.6164 11.8454 11.9466C11.3924 11.5822 11.1394 10.875 11.5246 10.4395C11.7243 10.2137 11.9838 10.0947 12.4948 10.1121C12.6693 10.1181 12.8368 10.1839 12.975 10.2906C14.5963 11.5427 15.7152 13.3928 15.9862 15.502C16.0566 16.0498 15.6021 16.4998 15.0499 16.4998H0.949191C0.396906 16.4998 -0.0575638 16.0498 0.0128305 15.502C0.283899 13.3927 1.40298 11.5424 3.02448 10.2903Z"
+            fill="#222222"
+          />
+        </svg>
+
+        <button
+          className="hover:text-blue-500 ml-3"
+          onClick={() => {
+            setToggleEditProfile(true);
+          }}
+        >
+          내 캐릭터
+        </button>
+      </div>
+      <div className="flex">
+        <svg
+          width="15"
+          height="18"
+          viewBox="0 -4 15 22"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5 5H10.5M5 13H10.5M5 9H9.5M13 1H2C1.44772 1 1 1.44772 1 2V16C1 16.5523 1.44772 17 2 17H13C13.5523 17 14 16.5523 14 16V2C14 1.44772 13.5523 1 13 1Z"
+            stroke="#222222"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        <button
+          className="hover:text-blue-500 ml-3"
+          onClick={() => {
+            router.push("/community/writepost");
+          }}
+        >
+          글 쓰기
+        </button>
+      </div>
+      <div className="flex">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 -5 18 21"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.58594 1L8.58594 3H17V15H1V1H6.58594Z"
+            stroke="#222222"
+            stroke-width="2"
+          />
+        </svg>
+
+        <button
+          className="hover:text-blue-500 ml-3"
+          onClick={() => setToggleMyposts(true)}
+        >
+          내가 쓴 글
+        </button>
       </div>
     </div>
   );
@@ -483,7 +737,7 @@ const EditProfile = ({
                       <div className="w-full max-h-[200px] overflow-y-auto">
                         {state === "" &&
                           addressList.map((obj, idx) => (
-                            <div className="w-full">
+                            <div className="w-full" key={idx}>
                               <button
                                 key={idx}
                                 onClick={(e) => {
@@ -498,7 +752,7 @@ const EditProfile = ({
                           ))}
                         {state !== "" &&
                           targetcounties?.counties?.map((obj, idx) => (
-                            <div className="w-full">
+                            <div className="w-full" key={idx}>
                               <button
                                 key={idx}
                                 value={obj}
@@ -536,6 +790,7 @@ const EditProfile = ({
                   <div className="absolute top-[530px] w-[180px] max-h-48 overflow-y-auto flex flex-col space-y-1 ">
                     {communityProfile?.liked_users_avatar?.map((src, idx) => (
                       <div
+                        key={idx}
                         className="flex flex-row items-center hover:bg-gray-200 border border-rounded rounded-full cursor-pointer"
                         onClick={() =>
                           router.push(
@@ -604,158 +859,6 @@ const EditProfile = ({
   );
 };
 
-const Sidemenu = ({ clickMyprofile, setToggleMyposts }) => {
-  const router = useRouter();
-  return (
-    <div className=" rounded-xl flex flex-col items-start space-y-4 border shadow-md p-2">
-      <div className="flex">
-        <svg
-          width="16"
-          height="17"
-          viewBox="0 -5 16 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M11 5C11 6.65685 9.65685 8 8 8C6.34315 8 5 6.65685 5 5C5 3.34315 6.34315 2 8 2C9.65685 2 11 3.34315 11 5ZM13 5C13 7.76142 10.7614 10 8 10C5.23858 10 3 7.76142 3 5C3 2.23858 5.23858 0 8 0C10.7614 0 13 2.23858 13 5ZM3.02448 10.2903C3.16276 10.1835 3.33034 10.1177 3.50495 10.1118C4.01604 10.0945 4.27556 10.2136 4.47518 10.4393C4.86035 10.8748 4.60724 11.5818 4.1542 11.9462C3.32132 12.616 2.67734 13.4973 2.30604 14.4998H13.693C13.3218 13.4975 12.678 12.6164 11.8454 11.9466C11.3924 11.5822 11.1394 10.875 11.5246 10.4395C11.7243 10.2137 11.9838 10.0947 12.4948 10.1121C12.6693 10.1181 12.8368 10.1839 12.975 10.2906C14.5963 11.5427 15.7152 13.3928 15.9862 15.502C16.0566 16.0498 15.6021 16.4998 15.0499 16.4998H0.949191C0.396906 16.4998 -0.0575638 16.0498 0.0128305 15.502C0.283899 13.3927 1.40298 11.5424 3.02448 10.2903Z"
-            fill="#222222"
-          />
-        </svg>
-
-        <button className="hover:text-blue-500 ml-3" onClick={clickMyprofile}>
-          내 캐릭터
-        </button>
-      </div>
-      <div className="flex">
-        <svg
-          width="15"
-          height="18"
-          viewBox="0 -4 15 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5 5H10.5M5 13H10.5M5 9H9.5M13 1H2C1.44772 1 1 1.44772 1 2V16C1 16.5523 1.44772 17 2 17H13C13.5523 17 14 16.5523 14 16V2C14 1.44772 13.5523 1 13 1Z"
-            stroke="#222222"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-
-        <button
-          className="hover:text-blue-500 ml-3"
-          onClick={() => {
-            router.push("/community/writepost");
-          }}
-        >
-          글 쓰기
-        </button>
-      </div>
-      <div className="flex">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 -5 18 21"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6.58594 1L8.58594 3H17V15H1V1H6.58594Z"
-            stroke="#222222"
-            stroke-width="2"
-          />
-        </svg>
-
-        <button
-          className="hover:text-blue-500 ml-3"
-          onClick={() => setToggleMyposts(true)}
-        >
-          내가 쓴 글
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const Review = ({ reviews, page, totalPages }) => {
-  const handleNext = () => {
-    if (hasNext) loadPage(page + 1);
-  };
-
-  return (
-    <div>
-      {reviews &&
-        reviews.map((review, i) => <ReviewCard reviewData={review} key={i} />)}
-    </div>
-  );
-};
-
-const ReviewCard = ({ reviewData }) => {
-  const rating = Number(reviewData.title); //title = rating in reviews categories
-  const content = reviewData.content;
-  const images = reviewData.images;
-  const nickname = reviewData.user_nickname;
-  const avatar_url = reviewData.avatar;
-  const date = reviewData.created_at;
-
-  return (
-    <div className="ml-8 mt-12">
-      <div className="flex">
-        <img
-          src={avatar_url}
-          width={60}
-          height={60}
-          className="rounded-full"
-        ></img>
-        <div className="ml-2">
-          <div className="flex flex-col">
-            <p>{nickname}</p>
-            <div className="flex">
-              {Array.from({ length: rating }).map((_, i) => (
-                <Image
-                  src="/svgs/star.svg"
-                  width={20}
-                  height={20}
-                  alt="star"
-                  key={i}
-                />
-              ))}
-            </div>
-            <div className="text-[10px] mt-1 ml-1">{formatDate(date)}</div>
-          </div>
-        </div>
-      </div>
-      <div className="pr-16 mt-3 ml-2">
-        <p>{content}</p>
-      </div>
-      <div className="mt-2 ml-2 flex">
-        {images &&
-          images.map((image, index) => (
-            <img
-              src={image.image_url}
-              width={200}
-              height={200}
-              className="mr-4"
-              alt="usr_image"
-              key={index}
-            />
-          ))}
-      </div>
-    </div>
-  );
-};
-function formatDate(dateString) {
-  const date = new Date(dateString); // parse to Date object
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is 0-based
-  const day = String(date.getDate()).padStart(2, "0");
-  const year = date.getFullYear();
-
-  return `${month}월 ${day}일 ${year}`;
-}
-
 const Myposts = ({ posts, csrfToken, setToggleMyposts }) => {
   const [myposts, setmyposts] = useState([]);
 
@@ -781,12 +884,9 @@ const Myposts = ({ posts, csrfToken, setToggleMyposts }) => {
       <div className="relative bg-white w-2/3 h-[70vh] p-8 rounded-xl shadow-xl">
         <div className="h-[50vh] overflow-y-auto flex flex-col">
           {myposts?.map((mypost, index) => (
-            <div>
+            <div key={index}>
               <div>
-                <button
-                  key={index}
-                  className="border rounded rounded-full overflow-y-auto p-2 mb-1 hover:bg-gray-100 w-full"
-                >
+                <button className="border rounded rounded-full overflow-y-auto p-2 mb-1 hover:bg-gray-100 w-full">
                   <div className="flex flex-row justify-between items-center">
                     <p
                       className="text-left ml-4"

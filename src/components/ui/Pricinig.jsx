@@ -19,14 +19,15 @@ import {
   Wallet,
   ShoppingBag,
 } from "lucide-react";
-
+import Icon from "@mdi/react";
+import { mdiCurrencyKrw } from "@mdi/js";
 export function CardDemo({
-  title = "Damn good card",
-  description = "A card that showcases a set of tools that you use to create your product.",
+  title = "",
+  description = "",
   cardType = "currency",
-  primaryCurrency = "USD",
-  primaryIcon = "tag",
-  primaryDeliveryIcon = "truck",
+  primaryCurrency = "",
+  primaryIcon = "",
+  primaryDeliveryIcon = "",
 }) {
   return (
     <Card>
@@ -168,22 +169,24 @@ const Skeleton = ({
         );
       case "EUR":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-[50px] w-[50px]  ${circleClass}`}>
             <Euro {...iconProps} className={`${className} text-blue-400`} />
           </Container>
         );
       case "BTC":
         return (
-          <Container className={`${circleClass}`}>
-            <Bitcoin
+          <Container className={`h-[80px] w-[80px] ${circleClass}`}>
+            <Icon
+              path={mdiCurrencyKrw}
+              size={1}
               {...iconProps}
-              className={`${className} text-yellow-400`}
+              className={` ${className} text-yellow-400`}
             />
           </Container>
         );
       case "GBP":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-[50px] w-[50px]  ${circleClass}`}>
             <PoundSterling
               {...iconProps}
               className={`${className} text-purple-400`}
@@ -225,19 +228,19 @@ const Skeleton = ({
         );
       case "tag":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-[80px] w-[80px] ${circleClass}`}>
             <Tag {...iconProps} className={`${className} text-pink-400`} />
           </Container>
         );
       case "package":
         return (
-          <Container className={`${circleClass}`}>
+          <Container className={`h-[50px] w-[50px] ${circleClass}`}>
             <Package {...iconProps} className={`${className} text-amber-400`} />
           </Container>
         );
       case "receipt":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-[50px] w-[50px] ${circleClass}`}>
             <Receipt
               {...iconProps}
               className={`${className} text-indigo-400`}
@@ -267,25 +270,25 @@ const Skeleton = ({
     switch (icon) {
       case "truck":
         return (
-          <Container className={`h-8 w-8 ${circleClass}`}>
+          <Container className={`h-[80px] w-[80px] ${circleClass}`}>
             <Truck {...iconProps} className={`${className} text-orange-400`} />
           </Container>
         );
       case "clock":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-8 w-8 ${circleClass}`}>
             <Clock {...iconProps} className={`${className} text-sky-400`} />
           </Container>
         );
       case "mapPin":
         return (
-          <Container className={`${circleClass}`}>
+          <Container className={`h-[50px] w-[50px] ${circleClass}`}>
             <MapPin {...iconProps} className={`${className} text-rose-400`} />
           </Container>
         );
       case "package":
         return (
-          <Container className={`h-12 w-12 ${circleClass}`}>
+          <Container className={`h-[50px] w-[50px]  ${circleClass}`}>
             <ShoppingBag
               {...iconProps}
               className={`${className} text-emerald-400`}
@@ -336,48 +339,6 @@ const Skeleton = ({
           </>
         )}
       </div>
-
-      <div className="h-40 w-px absolute top-20 m-auto z-40 bg-gradient-to-b from-transparent via-cyan-500 to-transparent animate-move">
-        <div className="w-10 h-32 top-1/2 -translate-y-1/2 absolute -left-10">
-          <Sparkles />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Sparkles = () => {
-  const randomMove = () => Math.random() * 2 - 1;
-  const randomOpacity = () => Math.random();
-  const random = () => Math.random();
-  return (
-    <div className="absolute inset-0">
-      {[...Array(12)].map((_, i) => (
-        <motion.span
-          key={`star-${i}`}
-          animate={{
-            top: `calc(${random() * 100}% + ${randomMove()}px)`,
-            left: `calc(${random() * 100}% + ${randomMove()}px)`,
-            opacity: randomOpacity(),
-            scale: [1, 1.2, 0],
-          }}
-          transition={{
-            duration: random() * 2 + 4,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-          style={{
-            position: "absolute",
-            top: `${random() * 100}%`,
-            left: `${random() * 100}%`,
-            width: `2px`,
-            height: `2px`,
-            borderRadius: "50%",
-            zIndex: 1,
-          }}
-          className="inline-block bg-black dark:bg-white"
-        ></motion.span>
-      ))}
     </div>
   );
 };
@@ -386,7 +347,7 @@ export const Card = ({ className, children }) => {
   return (
     <div
       className={cn_2(
-        "w-full h-full mx-auto p-8 rounded-xl border border-gray-800 bg-gray-900 shadow-[2px_4px_16px_0px_rgba(0,0,0,0.2)_inset] group text-white",
+        "w-full h-full mx-auto p-8 rounded-3xl border border-black bg-gray-900 shadow-[2px_4px_16px_0px_rgba(0,0,0,0.2)_inset] group text-white",
         className
       )}
     >
@@ -465,14 +426,14 @@ export default function Pricing() {
 
         <CardDemo
           title="환율"
-          description="처음 신청서를 작성할 때의 환율이 적용돼요."
+          description="처음 신청서를 작성한 시점의 환율이 적용돼요."
           cardType="currency"
           primaryCurrency="BTC"
         />
 
         <CardDemo
           title="배송비"
-          description="배송비는 무게와 부피에 따라 다르게 측정 돼요. 예상 배송비를 이용해 가늠 할 수 있어요."
+          description="배송비는 무게와 부피에 따라 다르게 측정 돼요. 배송비 계산기를 이용해 가늠 할 수 있어요."
           cardType="delivery"
           primaryDeliveryIcon="truck"
         />

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -15,21 +15,31 @@ import { useRouter } from "next/navigation";
 
 export function LoginScreen() {
   const router = useRouter();
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const result = await loginUser(userpassword, useremail);
 
-    if (!result.success) {
-      setError("Invalid login");
-      router.push("/login");
-    }
-    router.push("/");
-  };
-  const { loginUser } = useUser();
+  const { loginUser, fetchCsrfToken } = useUser();
   const [userpassword, setPassword] = useState("");
   const [useremail, setemail] = useState("");
   const [error, setError] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const result = await loginUser(userpassword, useremail);
+      console.log(result);
 
+      if (result.success) {
+        await fetchCsrfToken(); // optional depending on your login flow
+        router.push("/");
+      } else {
+        setError("Invalid login");
+        alert("아이디나 비밀번호가 일치하지 않아요!");
+      }
+    } catch (err) {
+      console.error("Unexpected error during login:", err);
+      alert("problem");
+      setError("로그인 중 오류가 발생했습니다.");
+    }
+  };
   return (
     <div className="shadow-input text-white mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200 font-myfont flex justify-center">

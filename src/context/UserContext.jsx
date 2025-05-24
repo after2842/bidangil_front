@@ -18,12 +18,13 @@ async function fetchCsrfToken() {
 }
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null); //will get reset(erased) upon refresh. => 1. user logs in, 2.user is updated, 3.user will get erased upon login unless storing in local storage
+  const [user, setUser] = useState(null);
+  const [userNickname, setuserNickname] = useState("");
   const [csrfToken, setCsrfToken] = useState(""); //will regenerate the csrf token(get request again upon refresh| refresh(reset)=> re-generate new token)
   const [profileData, setProfileData] = useState(null); //Unless, login it will be called whenever user load the profile page(useEffect in profile page source). so Profile Data will be erased when user hit refresh. BUT will be updated(get request to back) and get a fresh data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [communityProfile, setCommunityProfile] = useState("");
+  const [communityProfile, setCommunityProfile] = useState();
   const initializeCsrfToken = useCallback(async () => {
     const token = await fetchCsrfToken();
     setCsrfToken(token);
@@ -38,21 +39,14 @@ export const UserProvider = ({ children }) => {
     const getToken = async () => {
       try {
         const token = await fetchCsrfToken();
-        console.log("token", token);
+
         setCsrfToken(token);
-        console.log(`csrf:${token}`);
       } catch (error) {
         console.error("CSRF token fetch error:", error);
       }
     };
     getToken();
   }, [fetchCsrfToken]);
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
   const loginUser = async (userpassword, useremail) => {
     try {
@@ -69,20 +63,10 @@ export const UserProvider = ({ children }) => {
           useremail: useremail,
         }),
       });
-
-      if (!response.ok) {
-        console.log("wrong!!!!");
-        throw new Error("Login failed");
-      }
-
-      const result = await response.json();
-      // console.log("result", result);
-      // console.log("result.data", result.data);
-      // console.log("result.data.nickname", result.data.nickname);
-      setUser(result.data);
-      localStorage.setItem("user", JSON.stringify(result.data));
-      console.log("userinfo", user.nickname);
-      return { success: true };
+      if (response.status === 200) {
+        setUser(true);
+        return { success: true };
+      } else return { success: false };
     } catch (err) {
       console.error("Login error", err);
       return { success: false, message: err.message };
@@ -109,8 +93,7 @@ export const UserProvider = ({ children }) => {
 
       const data = await response.json();
       setProfileData(data["data"]);
-      console.log("&&&&&&&&");
-      console.log("data///", data["data"]);
+      setuserNickname(data["nickname"]);
     } catch (err) {
       console.error("Profile fetch error:", err);
       setError(err.message);
@@ -127,7 +110,7 @@ export const UserProvider = ({ children }) => {
       setCsrfToken(token);
       const response = await apiFetch("/api/community_profile/", {
         method: "GET",
-        //credentials: "include", // sends cookies for session
+        credentials: "include", // sends cookies for session
         headers: {
           "X-CSRFToken": csrfToken,
         },
@@ -138,7 +121,14 @@ export const UserProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      setCommunityProfile(data["avatar"]);
+      setCommunityProfile({
+        avatar: data["avatar"],
+        nickname: data["nickname"],
+        address: data["address"],
+        likes: data["likes"],
+        liked_users_avatar: data["liked_users_avatars"],
+        liked_users_nickname: data["liked_users_nickname"],
+      });
     } catch (err) {
       console.error("Profile fetch error:", err);
       setError(err.message);
@@ -151,6 +141,7 @@ export const UserProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         user,
+        userNickname,
         csrfToken,
         setUser,
         loginUser,

@@ -26,7 +26,6 @@ export default function StickyScroll({
 
   // Update activeCard whenever scrollYProgress changes
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    console.log("Scroll progress (0 to 1):", latest);
     // Create breakpoints for each card: 0, 1/cardLength, 2/cardLength, ...
     const cardsBreakpoints = [0, 0.204, 0.376, 0.644];
     // Find the breakpoint closest to the current scroll progress
@@ -97,7 +96,7 @@ export default function StickyScroll({
               >
                 {item}
               </motion.h2>
-              <motion.p
+              <motion.div
                 // same logic for paragraph
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeCard === index ? 1 : 0.3 }}
@@ -118,7 +117,7 @@ export default function StickyScroll({
                     ></RenderLine>
                   ))}
                 </div>
-              </motion.p>
+              </motion.div>
             </div>
           ))}
 

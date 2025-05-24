@@ -105,11 +105,11 @@ export default function AddressSuggestions({ address, setAddress }) {
   }
 
   return (
-    <div>
-      <div className="mt-12 text-sm text-left ml-2">
+    <div className="">
+      <div className="mt-4 md:mt-12 text-sm text-left ml-2">
         <h>주소 자동완성</h>
       </div>
-      <div className=" bg-transparent w-full max-w-md mt-2 rounded-xl px-1">
+      <div className=" bg-transparent w-full max-w-md mt-2 rounded-xl px-1 max-h-20 overflow-y-auto md:max-h-none md:overflow-visible">
         {predictions.map((item) => (
           <div
             key={item.place_id}

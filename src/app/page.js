@@ -1,17 +1,10 @@
 "use client";
-import Image from "next/image";
+
 import React from "react";
 import FloatingNavbar from "@/components/ui/NavigationMenu";
-import BentoGridDemo from "@/components/ui/BentoGrid";
 import GlowingEffectDemoSecond from "@/components/ui/GlowingEffectDemo";
-import SubmitGPTform from "@/components/ui/GptForm";
-import { Button } from "@/components/ui/moving-border";
-
 import Footer from "@/components/ui/Footer";
-import LampDemo from "@/components/ui/lamp";
-import { TestglowBento } from "@/components/ui/GlowingEffectDemo";
-import { GlowingButton } from "@/components/ui/GlowingEffectDemo";
-
+import Restrictions from "@/components/ui/Restrictions";
 import ConfirmRequest from "@/assets/icons/confirmRequest.svg";
 import PayPhone from "@/assets/icons/payPhone.svg";
 import FormSubmit from "@/assets/icons/formSubmit.svg";
@@ -19,6 +12,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Pricing from "@/components/ui/Pricinig";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
 const ContainerTextFlip = dynamic(
   () =>
     import("@/components/ui/container-text-flip").then((mod) => mod.default),
@@ -104,7 +98,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/* Section 1 with top background image */}
       <FloatingNavbar></FloatingNavbar>
       <section
@@ -114,22 +108,23 @@ export default function Home() {
         <div className="h-full bg-black/30 flex items-center items-center flex flex-col space-y-10 pt-[200px]">
           {/* <h1 className="text-white text-9xl font-bold font-myfont">비단길</h1> */}
 
-          <p className="text-white text-[20px] md:text-5xl pt-[10px] font-myfont">
-            한국에 있는 것처럼, 모든 쇼핑몰 이용해요
+          <p className="text-white text-4xl md:text-5xl pt-[10px] font-myfont">
+            한국에 있는 것처럼,
+            <br className="block md:hidden" /> 모든 쇼핑몰 이용해요
           </p>
-          <p className="text-white text-[20px] md:text-5xl pt-[10px] font-myfont">
+          <p className="hidden md:block text-white text-[20px] md:text-5xl pt-[10px] font-myfont">
             인증 없이 절차 없이 빠르게
           </p>
-          <div className="text-blue-500 text-[30px] font-myfont pt-[50px]">
+          <div className="text-blue-500 text-xl md:text-5xl font-myfont pt-[50px]">
             <span className=" text-white">한국에서 </span>{" "}
-            <ContainerTextFlip className="text-blue-500" />{" "}
+            <ContainerTextFlip className="text-blue-500" />
             <span className="text-white">찾고 계신가요?</span>
           </div>
 
           <div className="pt-[60px]">
             <div>
               <button
-                className="bg-white border border-blue-500 rounded-full px-6 py-4 hover:bg-blue-500 text-2xl font-myfont"
+                className="bg-white border border-blue-500 rounded-full px-4 py-2 text-xl md:px-6 md:py-4 hover:bg-blue-500 md:text-2xl font-myfont"
                 onClick={() => {
                   router.push("/form");
                 }}
@@ -142,8 +137,14 @@ export default function Home() {
         </div>
       </section>
       <section
-        className="h-screen bg-cover bg-center filter brightness-100"
-        style={{ backgroundImage: "url('/images/main_image_2.jpg')" }}
+        className="
+            h-screen
+            bg-black            
+            md:bg-[url('/images/main_image_2.jpg')]  /* Background starts at md */
+            md:bg-cover
+            md:bg-center
+            filter brightness-100
+          "
       >
         <div className="pt-[120px]">
           <GlowingEffectDemoSecond></GlowingEffectDemoSecond>
@@ -157,14 +158,17 @@ export default function Home() {
           contentContent={contentContent}
         />
       </section>
-      <section className="h-screen bg-gray-200">
+      <section className="h-screen bg-white">
         <Pricing></Pricing>
       </section>
-
-      <section className=" h-screen ">
-        <LampDemo></LampDemo>
+      <section className="bg-gray-200">
+        <Restrictions />
       </section>
-      <Footer />
+
+      {/* <section className=" h-screen ">
+        <LampDemo></LampDemo>
+      </section> */}
+      <Footer className="absolute bottom-0" />
     </div>
   );
 }

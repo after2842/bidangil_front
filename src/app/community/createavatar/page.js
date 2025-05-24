@@ -15,7 +15,25 @@ export default function Createavatar() {
     const newAnswer = [...answer];
     newAnswer[page - 1] = value;
     setAnswer(newAnswer);
+    
+    console.log('isnext', isnext)
   };
+  const [isnext, setisnext] = useState(true)
+
+  useEffect(()=>{
+    
+
+    if(answer[page-1] != null){
+   
+      setisnext(true)
+      console.log('why????')
+    }else{
+    
+      console.log('ddd////////')
+      setisnext(false)
+    }
+    
+  },[answer,page])
   // personalityMap[질문번호][선택지-1] → 단어
   const personalityMap = {
     1: [
@@ -27,7 +45,7 @@ export default function Createavatar() {
 
     2: [
       "즉시행동형", // Q2-1  바로 짐 싼다
-      "신중도전형", // Q2-2  망설이다가 출발
+      "신중형", // Q2-2  망설이다가 출발
       "안정지향형", // Q2-3  거절 ― 예측 가능성 중시
       "현실분석형",
     ], // Q2-4  조건 따져 결정
@@ -35,14 +53,14 @@ export default function Createavatar() {
     3: [
       "스토리텔러형", // Q3-1  재미있는 3단 스토리
       "데이터전달형", // Q3-2  슬라이드·팩트 중심
-      "키워드스프린터형", // Q3-3  짧고 굵게 키워드
-      "무대긴장형",
+      "상남자형", // Q3-3  짧고 굵게 키워드
+      "소심형",
     ], // Q3-4  순서 미루는 타입
 
     4: [
-      "완벽주의감독형", // Q4-1  시네마틱 스토리보드
+      "완벽주의형", // Q4-1  시네마틱 스토리보드
       "브이로그러버형", // Q4-2  일상 브이로그
-      "협업기획형", // Q4-3  친구들 분업·합본
+      "팀플레이어형", // Q4-3  친구들 분업·합본
       "임팩트속성형",
     ], // Q4-4  마감 직전 임팩트 편집
   };
@@ -70,7 +88,7 @@ export default function Createavatar() {
       });
 
       if (response.status === 200) {
-        alert("성공적으로 전송되었습니다! ");
+        console.log('avatar submitted!')
       } else {
         alert("서버 오류가 발생했습니다.");
       }
@@ -84,7 +102,7 @@ export default function Createavatar() {
       console.log("sent!");
       handleSubmit();
     }
-  }, [page, handleSubmit]);
+  }, [page]);
   useEffect(() => {
     try {
       console.log("websocket connecting..");
@@ -119,9 +137,10 @@ export default function Createavatar() {
           answer={answer}
           setpage={setpage}
           avatarUrl={avatarUrl}
+          setisnext={setisnext}
         />{" "}
         <div className="flex flex-row justify-between text-xl">
-          {page && page > 1 ? (
+          {page && page > 1 && page <6 ? (
             <button
               className="border border-blue-500 px-4 rounded-2xl py-[2px] ml-24 mb-12 hover:text-white hover:bg-blue-500"
               onClick={() => {
@@ -133,7 +152,7 @@ export default function Createavatar() {
           ) : (
             <>⠀</>
           )}
-          {page && page < 6 ? (
+          {page && page < 6 && isnext? (
             <button
               className="border border-blue-500 px-4 rounded-2xl py-[2px] mr-24 mb-12 hover:text-white hover:bg-blue-500"
               onClick={() => {
@@ -145,16 +164,31 @@ export default function Createavatar() {
           ) : (
             <>⠀</>
           )}
-          {page && page === 6 && avatarUrl !== "" && (
-            <button
-              className="border border-blue-500 px-4 py-[2px] rounded-2xl mr-24 mb-12 hover:text-white hover:bg-blue-500"
-              onClick={() => {
-                router.push("/community");
-              }}
-            >
-              좋아요!
-            </button>
-          )}
+          {page && page === 6 && (avatarUrl === "" ? (
+         
+<div className="relative group">
+  <button
+    className="border border-blue-500 px-4 py-[2px] rounded-2xl mr-24 mb-12 hover:text-white hover:bg-blue-500"
+    onClick={() => {
+      router.push("/community");
+    }}
+  >
+    나가기
+  </button>
+  <div className="absolute top-12 bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    나중에 프로필에서<br/> 확인하실 수 있어요!
+  </div>
+</div>
+              
+
+          ):(            <button
+            className="border border-blue-500 px-4 py-[2px] rounded-2xl mr-24 mb-12 hover:text-white hover:bg-blue-500"
+            onClick={() => {
+              router.push("/community");
+            }}
+          >
+            좋아요!
+          </button>))}
         </div>
       </div>
     </div>
@@ -168,6 +202,7 @@ const QuestionAvatar = ({
   setAnswer,
   answer,
   avatarUrl,
+  setisnext,
 }) => {
   return (
     <div className="w-4/5 h-full flex justify-center mx-auto">
@@ -178,6 +213,7 @@ const QuestionAvatar = ({
               setAnswer={setAnswer}
               answer={answer}
               setpage={setpage}
+              setisnext={setisnext}
             />
           </>
         )}
@@ -413,10 +449,9 @@ const QuestionAvatar = ({
           <div className="w-full h-full flex justify-center items-center">
             {" "}
             {avatarUrl === "" ? (
-              <div className="text-center">
-                흠... 아직 로딩중이에욤!
-                <br /> 완성되면 알려드릴테니, 페이지를 나가셔도 좋아요
-              </div>
+<>
+<AvatarLoading species={'쇠똥구리'} personality={'온화한'} />
+</>
             ) : (
               <div>
                 {" "}
@@ -435,7 +470,7 @@ const QuestionAvatar = ({
   );
 };
 
-function SpeciesSelector({ setAnswer, answer, setpage }) {
+function SpeciesSelector({ setAnswer, answer, setpage, setisnext }) {
   const speciesList = [
     "사람",
     "로봇",
@@ -459,6 +494,7 @@ function SpeciesSelector({ setAnswer, answer, setpage }) {
       arr[0] = sp;
       return arr;
     });
+   
   };
 
   useEffect(() => {
@@ -479,7 +515,7 @@ function SpeciesSelector({ setAnswer, answer, setpage }) {
             type="button"
             onClick={() => handleClick(sp)}
             className={` rounded-2xl border-2 px-4 py-8 text-center transition-all shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-300 ${
-              selected === sp
+              answer[0] === sp
                 ? "border-blue-500 bg-blue-100"
                 : "border-gray-300 bg-white hover:bg-gray-50"
             }`}
@@ -488,6 +524,45 @@ function SpeciesSelector({ setAnswer, answer, setpage }) {
           </motion.button>
         ))}
       </div>
+    </div>
+  );
+}
+
+
+const AvatarLoading = ({ species, personality }) => {
+  const messages = [
+    `조사 결과를 성공적으로 보냈어요`,
+    `${species}를 그리고 있어요!`,
+    `당신은 ${personality}를 가지고 계시군요. 아주 훌륭해요`,
+    `흠... 당신의 모습은...`,
+    `조금만 기다려 주세요...`,
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false); // Start fade-out
+      setTimeout(() => {
+        setIndex((prev) => (prev < messages.length - 1 ? prev + 1 : prev));
+        setVisible(true); // Start fade-in
+      }, 500); // 0.5s fade out, change message
+    }, 4500); // Every 4 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center h-64 ">
+      <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mb-4"></div>
+      <p
+        className={`text-lg font-medium text-center transition-opacity duration-500 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {messages[index]}
+      </p>
     </div>
   );
 }

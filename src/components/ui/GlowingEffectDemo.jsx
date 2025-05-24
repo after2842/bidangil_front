@@ -1,15 +1,9 @@
 "use client";
-import { Box, Lock, Settings } from "lucide-react"; // 1) We import three icons from lucide-react to display in our cards.
+
 import { GlowingEffect } from "./glowing-effect"; // 2) We import the GlowingEffect component that handles a neon glow effect.
-import { Sparkles } from "lucide-react";
+
 import { useRouter } from "next/navigation";
-import Visaicon from "@/assets/icons/visa.svg";
-import Mastericon from "@/assets/icons/master.svg";
-import Discover from "@/assets/icons/discover.svg";
-import CardIcon from "@/assets/icons/cardIcon.svg";
-import DeliveryIcon from "@/assets/icons/deliveryIcon.svg";
-import SpeedIcon from "@/assets/icons/speedIcon.svg";
-import PaymentIcon from "react-payment-icons";
+
 import PaymentIconsAnimation from "@/components/ui/PaymentAnimation";
 const icons = [
   "/images/amazon.png",
@@ -20,44 +14,16 @@ const icons = [
   "/images/master.png",
 ];
 
-// import Visaicon from "@/assets/icons/visa.svg";
-// import Visaicon from "@/assets/icons/visa.svg";
-// import Visaicon from "@/assets/icons/visa.svg";
-// import Visaicon from "@/assets/icons/visa.svg";
-// 3) This component, GlowingEffectDemoSecond, will create a grid with three items,
-//    one of which is larger, forming a bento-like layout.
 export default function GlowingEffectDemoSecond() {
   return (
     <div className="bg-transparent min-h-screen w-full p-4 md:p-8 mt-[-20px]">
       <div className="mx-auto max-w-7xl">
-        {/* 
-          9) mx-auto => auto left/right margin, centering this block horizontally.
-          10) max-w-7xl => a maximum width of ~80rem (1280px), to keep content from 
-                          being too wide on big screens.
-        */}
         <div className="mb-8 text-left font-myfont">
-          {/* 11) mb-8 => margin-bottom 2rem. text-left => left-aligned text. 
-                  font-myfont => a custom font utility class. */}
           <h1 className="text-4xl font-bold text-white pb-[15px]">
-            {/* 12) text-4xl => big heading. 
-                  font-bold => bold text. 
-                  text-white => the color is white. 
-                  pb-[15px] => extra 15px bottom padding on the heading. */}
             쉽고 빠른 쇼핑
           </h1>
         </div>
-        {/* 
-          13) This is our grid container. 
-              We define "grid grid-cols-1" => one column by default, 
-              "gap-4" => 1rem gap, 
-              "md:grid-cols-3 md:grid-rows-2" => at medium screens, 
-              we have 3 columns and 2 rows.
-              "md:grid-flow-row-dense" => the 'row-dense' property tries to fill 
-              the grid rows without leaving unnecessary gaps. 
-              This means if there's space left in a row, 
-              it will try to place subsequent items in it, 
-              making the layout more compact or visually appealing. 
-        */}
+
         <div
           className="
             grid grid-cols-1 gap-6
@@ -65,28 +31,14 @@ export default function GlowingEffectDemoSecond() {
             md:grid-flow-row-dense
           "
         >
-          {/* 14) We'll have 3 or 4 items (the code shows 3 actual items). 
-                Each item is a "GridItem" component. */}
-
           <div className="md:col-span-1 md:row-span-1">
-            {/* 
-              15) On medium screens, this first item 
-                  spans 1 column and 1 row => a small card. 
-            */}
             <GridItem
-              title="배송은 3일 안에"
-              description={"결제부터 물건을 받기까지 3일이면 돼요.\n "}
+              title="배송은 빠르게"
+              description={"결제부터 물건을 받기까지 약 7일정도 걸려요.\n"}
             />
           </div>
 
           <div className="md:col-span-2 md:row-span-2">
-            {/* 
-              16) This item uses "md:col-span-2" => it spans 2 columns, 
-                  "md:row-span-2" => also spans 2 rows. 
-                  That makes it a larger card in a 'bento' style layout 
-                  that stands out. 
-            */}
-
             <GridItem
               title="달러로 결제"
               description={
@@ -98,12 +50,11 @@ export default function GlowingEffectDemoSecond() {
           </div>
 
           <div className="md:col-span-1 md:row-span-1">
-            {/* 
-              18) Another small card, again 1 column 1 row. 
-            */}
             <GridItem
-              title="한번만 결제"
-              description={"구매 하고싶은 물건과 배송까지 한번에 결제해요.\n  "}
+              title="간편한 결제"
+              description={
+                "주문을 신청하고 나면 휴대폰을 통해서 결제부터 진행상황 확인까지 전부 알려드려요."
+              }
             />
           </div>
         </div>
@@ -140,11 +91,6 @@ const GridItem = ({ title, description, isLarge = false }) => {
           inactiveZone={0.01} // 29) a small radius around the center to disable the glow
         />
 
-        {/* 
-          30) The actual content container is "relative" so it appears 
-              above the absolutely placed glow effect. 
-              This is the visible box on top. 
-        */}
         <div
           className="
             relative flex h-full flex-col justify-between gap-6
@@ -156,19 +102,18 @@ const GridItem = ({ title, description, isLarge = false }) => {
           "
         >
           <div className="relative flex h-full flex-col justify-between">
-            {/* 31) The top left icon box, with 'icon' passed as a prop */}
-
             <div className="space-y-3">
-              {/* 32) The main Title - bigger if isLarge is true */}
               <h
                 className={`
                   font-semibold font-sans -tracking-4 text-balance text-white mb-8
-                  ${isLarge ? "pt-0.5 text-2xl md:text-5xl" : "pt-0.5 text-2xl md:text-3xl"}
+                  ${isLarge ? "pt-0.5 text-4xl md:text-5xl" : "pt-0.5 text-3xl md:text-3xl"}
                 `}
               >
                 {title}
               </h>
-              {isLarge && <PaymentIconsAnimation icons={icons} />}
+              <div className="hidden md:block">
+                {isLarge && <PaymentIconsAnimation icons={icons} />}
+              </div>
 
               {/* 33) Description text in gray-400, also slightly bigger if isLarge */}
 
@@ -178,7 +123,7 @@ const GridItem = ({ title, description, isLarge = false }) => {
                 absolute bottom-0
                 whitespace-pre-line
                 font-sans text-gray-300
-                ${isLarge ? "text-base md:text-xl" : "text-sm md:text-lg"}
+                ${isLarge ? "text-lg md:text-xl" : "text-md md:text-lg"}
               `}
               >
                 {description}

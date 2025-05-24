@@ -1,25 +1,41 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import { apiFetch } from "@/lib/api";
+import useSessionPing from "./SessionPing";
+
 export default function FloatingNavbar() {
   const router = useRouter();
   const { user, setUser, csrfToken } = useUser();
   const logoutUser = () => {
-    localStorage.removeItem("user");
     setUser(null);
   };
-  const logout = () => {
-    fetch("http://localhost:8000/api/logout/", {
+  const logout = async () => {
+    await apiFetch("/api/logout/", {
       method: "POST",
-      credentials: "include",
       headers: {
         "X-CSRFToken": csrfToken,
       },
+      credentials: "include",
     });
     logoutUser();
   };
+  async function ping() {
+    try {
+      const res = await apiFetch("/api/session_ping/", {
+        method: "GET",
+        credentials: "include", // ★ send session cookie
+      });
+      setUser(res.ok); // 200 → true, 401 → false
+    } catch {
+      setUser(false);
+    }
+  }
+  useEffect(() => {
+    ping();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50">

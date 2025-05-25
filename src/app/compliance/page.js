@@ -2,7 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
+export default function Page() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <CompliancePage />
+    </Suspense>
+  );
+}
 /* ──────────────────────────────────────────
    품목별 규정 데이터 (예시 3개만 작성)
    나머지 품목(매니큐어, 담배, 주사기 … 영양제)은
@@ -118,7 +126,7 @@ function RefButton({ label, url }) {
 /* ──────────────────────────────────────────
    메인 컴플라이언스 페이지
    ────────────────────────────────────────── */
-export default function CompliancePage() {
+function CompliancePage() {
   const searchParams = useSearchParams();
   const item = searchParams.get("item"); // ?item=perfume 등
   const sectionRefs = useRef({});

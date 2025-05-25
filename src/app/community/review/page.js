@@ -483,7 +483,7 @@ const EditProfile = ({
                       <div className="w-full max-h-[200px] overflow-y-auto">
                         {state === "" &&
                           addressList.map((obj, idx) => (
-                            <div className="w-full">
+                            <div className="w-full" key={idx}>
                               <button
                                 key={idx}
                                 onClick={(e) => {
@@ -498,7 +498,7 @@ const EditProfile = ({
                           ))}
                         {state !== "" &&
                           targetcounties?.counties?.map((obj, idx) => (
-                            <div className="w-full">
+                            <div className="w-full" key={idx}>
                               <button
                                 key={idx}
                                 value={obj}
@@ -536,6 +536,7 @@ const EditProfile = ({
                   <div className="absolute top-[530px] w-[180px] max-h-48 overflow-y-auto flex flex-col space-y-1 ">
                     {communityProfile?.liked_users_avatar?.map((src, idx) => (
                       <div
+                        key={idx}
                         className="flex flex-row items-center hover:bg-gray-200 border border-rounded rounded-full cursor-pointer"
                         onClick={() =>
                           router.push(
@@ -781,7 +782,7 @@ const Myposts = ({ posts, csrfToken, setToggleMyposts }) => {
       <div className="relative bg-white w-2/3 h-[70vh] p-8 rounded-xl shadow-xl">
         <div className="h-[50vh] overflow-y-auto flex flex-col">
           {myposts?.map((mypost, index) => (
-            <div>
+            <div key={index}>
               <div>
                 <button
                   key={index}

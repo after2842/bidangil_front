@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+**bidangil_front/README.md**  
+```markdown
+# Bidangil Frontend
 
-First, run the development server:
+Bidangil Frontend is the React web application for the Bidangil platform, built on Next.js. It delivers a rich, interactive user interface that allows customers to request products, monitor order progress, and participate in a community space. The app emphasizes a smooth user experience for complex workflows – from placing international orders to real-time updates like avatar generation – all presented in a clean, responsive design.
+
+## Motivation & Challenges
+
+This frontend was created to make a sophisticated service feel simple and engaging for end-users. It aims to solve real-world usability challenges: guiding users through multi-step processes (like creating a custom avatar or submitting a purchase request) without confusion, and keeping them informed of their order status in real time. Building on Next.js provided server-side rendering and routing benefits, but also introduced the challenge of managing state and side-effects in a largely asynchronous application. Ensuring responsive design across devices and integrating various interactive features (maps, rich text editing, etc.) were also important considerations. Overall, the goal was to combine the power of the backend with an intuitive UI that hides complexity and builds user trust.
+
+## Highlights
+
+- **Real-Time Avatar Creation:** One standout feature is a real-time avatar generator. Users go through a multi-step form to select preferences, then the frontend triggers an API call to generate a personalized avatar. Using a WebSocket connection, the app listens for a notification when the backend’s AI image generation task is complete. The moment the avatar is ready, it is rendered on the client without requiring a page refresh, showcasing seamless real-time feedback in the UI.
+- **Dynamic Order Tracking & Community Features:** The application provides dynamic views for order and community data. It fetches order statuses and community posts via REST APIs and updates the interface accordingly (e.g., showing the current delivery step or new comments in a discussion). The use of React context for user session and data caching ensures that elements like the navigation bar or profile info reflect the current state throughout the app. Additionally, features like an interactive compliance guide (with shipping regulations) and Google Maps integration for certain post types demonstrate the app’s capability to present complex information in a user-friendly way.
+- **Modern UI/UX and Performance:** Bidangil Frontend leverages Next.js 14 features (App Router and server components) alongside client-side interactivity where needed. The interface is styled with Tailwind CSS, benefiting from utility classes for rapid responsive design. Components from libraries like Material Tailwind and Radix UI are used to create a polished, consistent look and feel. Special attention was paid to performance by code-splitting pages and using Suspense-based loading states for smooth transitions. These optimizations make the application feel snappy even as it handles image uploads, map renders, or rich text editing with Tiptap.
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (React 18):contentReference[oaicite:4]{index=4} – leveraging both server-side rendering and client-side React for an optimal user experience.
+- **Languages & Libraries:** JavaScript/JSX, Tailwind CSS for styling, Framer Motion for animations, Tiptap editor for rich text input.
+- **State & Data Handling:** Next.js App Router with React Context for global state (user auth/session), `fetch` API for REST calls to the Django backend, and native WebSocket API for live updates.
+- **Additional Integrations:** Google Maps API (for location-based content), third-party UI components (Material Tailwind, Lucide icons), and support for media uploads/embeds in posts.
+
+## Setup
+
+Ensure **Node.js** (v18+ recommended) is installed. After cloning the repository, install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

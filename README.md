@@ -1,6 +1,3 @@
-
-**bidangil_front/README.md**  
-```markdown
 # Bidangil Frontend
 
 Bidangil Frontend is the React web application for the Bidangil platform, built on Next.js. It delivers a rich, interactive user interface that allows customers to request products, monitor order progress, and participate in a community space. The app emphasizes a smooth user experience for complex workflows – from placing international orders to real-time updates like avatar generation – all presented in a clean, responsive design.

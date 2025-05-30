@@ -106,7 +106,9 @@ export default function UserProfile() {
                 </p>
               </div>
               <div className="text-sm font-semibold text-blue-500">
-                {order.Payment["total_price"].toLocaleString()}원
+                {order?.Payment?.total_price != null
+                  ? order.Payment.total_price.toLocaleString() + "원"
+                  : ""}
               </div>
             </div>
           ))

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { apiFetch } from "@/lib/api";
 export default function Signup() {
   return (
     <section className="bg-black">
@@ -27,7 +28,7 @@ export function SignupFormDemo() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/send_code/", {
+      const response = await apiFetch("/api/send_code/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ export function SignupFormDemo() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/verify_code/", {
+      const response = await apiFetch("/api/verify_code/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +87,7 @@ export function SignupFormDemo() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/sign_up/", {
+      const response = await apiFetch("/api/sign_up/", {
         method: "POST",
         //credentials: "include",
         headers: {

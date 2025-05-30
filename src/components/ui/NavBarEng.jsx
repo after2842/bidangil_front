@@ -44,11 +44,11 @@ export default function FloatingNavbar() {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => {
-              router.push("/");
+              router.push("/en");
             }}
             className="text-white text-4xl font-bold font-myfont pt-[10px]"
           >
-            비단길
+            BDG
           </button>
         </div>
 
@@ -56,7 +56,7 @@ export default function FloatingNavbar() {
         <nav className="flex items-center space-x-8 text-white">
           <button>
             <a href="/community" className=" font-semibold hover:underline">
-              커뮤니티
+              Community
             </a>
           </button>
 
@@ -64,7 +64,7 @@ export default function FloatingNavbar() {
             <div className="flex items-center space-x-8 text-white">
               <button onClick={logout}>로그아웃</button>
               <a href="/profile" className="font-semibold hover:underline">
-                내 정보
+                Profile
               </a>
             </div>
           ) : (
@@ -72,7 +72,7 @@ export default function FloatingNavbar() {
               onClick={() => router.push("/login")}
               className="font-semibold hover:underline"
             >
-              로그인
+              Log in
             </button>
           )}
         </nav>

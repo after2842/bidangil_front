@@ -10,7 +10,9 @@ module.exports = {
     extend: {
       fontFamily: {
         myfont: ["MyFont", "sans-serif"],
+        arimo: ["Arimo", "sans-serif"],
       },
+
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

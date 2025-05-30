@@ -1,21 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect, use } from "react";
-import { motion } from "motion/react";
-import { LinkPreview } from "./link-preview";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input_2";
-import { InputHalf } from "@/components/ui/input_3";
-import { cn } from "@/lib/utils";
-import TextField from "./Textfield";
 import { BoxIcon, GlobeIcon, Tag, TagIcon } from "lucide-react";
 import { AddressScreen } from "./AddressScreen_2";
-import AddressModal from "./AddressModal";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import { BottomGradient } from "@/components/ui/Login";
-import globeIcon from "../../assets/icons/globe.svg";
-import { AuroraBackground } from "./AuraBackground";
-
 import RequestForm from "./RequestForm";
 import Image from "next/image";
 import AddressAutocomplete from "./AddressAutoComp";

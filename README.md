@@ -14,7 +14,7 @@ This frontend was created to make a sophisticated service feel simple and engagi
 
 ## Tech Stack
 
-- **Framework:** Next.js 14 (React 18):contentReference[oaicite:4]{index=4} – leveraging both server-side rendering and client-side React for an optimal user experience.
+- **Framework:** Next.js 14.2 (React 18) – leveraging both server-side rendering and client-side React for an optimal user experience.
 - **Languages & Libraries:** JavaScript/JSX, Tailwind CSS for styling, Framer Motion for animations, Tiptap editor for rich text input.
 - **State & Data Handling:** Next.js App Router with React Context for global state (user auth/session), `fetch` API for REST calls to the Django backend, and native WebSocket API for live updates.
 - **Additional Integrations:** Google Maps API (for location-based content), third-party UI components (Material Tailwind, Lucide icons), and support for media uploads/embeds in posts.

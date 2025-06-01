@@ -23,6 +23,44 @@ This frontend was created to make a sophisticated service feel simple and engagi
 
 Ensure **Node.js** (v18+ recommended) is installed. After cloning the repository, install dependencies and run the development server:
 
+
+
+
+
+
+# Real-Time Avatars in Bidangil: Why We Hand Off 30-Second Jobs to Redis + WebSockets  
+
+Bidangil lets users create a personalised avatar by asking GPT-Image to draw one.  
+The AI call takes **~30 s**—far too long to keep an HTTP request open and far too expensive to burn a web-server worker thread.  
+Here’s how we moved that heavy lifting to **Celery + Redis** and pushed the finished image to the browser the instant it was ready.
+
+---
+
+## 1 Why not just wait 30 s in a REST view?
+
+| Strategy | What happens under load? |
+|----------|--------------------------|
+| **Synchronous view**<br>`response = call_openai()` | • A Daphne worker sits idle for 30 s per request.<br>• With 50 simultaneous avatar requests a t3.medium would need ~50× the threads just to stay responsive.<br>• Users stare at a spinner, the tab may time out on slower networks. |
+| **Async + background queue (our choice)** | • The view returns in **~50 ms** («task queued»).<br>• Celery worker (separate process) talks to OpenAI, uploads to S3.<br>• When done it notifies the user via **Redis → Channel Layer → WebSocket**.<br>• Browser pops the new image instantly, no refresh needed. |
+
+> **Bottom line:** Move any >2 s task off the request/response path.  
+> Keep web workers free for new traffic; give users a snappy UI.
+
+---
+
+## 2 Architecture at a glance  
+
+```mermaid
+graph TD
+A[Browser] -- POST /generate_avatar --> B[Django view]
+B -->|Celery .delay| C[Redis - broker]
+D[Celery worker] -- OpenAI 30 s --> E[GPT Image API]
+D -->|Upload| F[S3 bucket]
+D -->|group_send| R[Redis - channel layer]
+R --> G[Daphne + Channels]
+G -->|WebSocket| A
+
+
 ```bash
 npm install
 npm run dev

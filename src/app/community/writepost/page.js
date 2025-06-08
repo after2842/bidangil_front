@@ -12,13 +12,15 @@ import { useEffect } from "react";
 const MAX_FILES = 9;
 
 export default function WritePost() {
-  const { fetchCsrfToken, fetchCommunityInfo, communityProfile } = useUser();
+  const { fetchCsrfToken, fetchCommunityInfo, communityProfile, csrfToken } =
+    useUser();
   const router = useRouter();
 
   const [mode, setMode] = useState(null);
   const [title, setTitle] = useState("");
   const [sharetitle, setSharetitle] = useState("");
   const [sharebody, setSharebody] = useState("");
+  const [posts, setposts] = useState([]);
 
   const [funtitle, setFuntitle] = useState("");
   const [funbody, setFunbody] = useState("");
@@ -37,6 +39,7 @@ export default function WritePost() {
 
   const [funcategory, setFuncategory] = useState("");
   const [meetupcategory, setMeetupcategory] = useState("");
+  const [toggleMyposts, setToggleMyposts] = useState(false);
   const clickMyprofile = () => {
     if (toggleEditProfile) {
       setToggleEditProfile(false);
@@ -228,6 +231,7 @@ export default function WritePost() {
       {label}
     </motion.button>
   );
+
   useEffect(() => {
     console.log("avatar called");
     fetchCommunityInfo();
@@ -242,12 +246,20 @@ export default function WritePost() {
       />
 
       <div className="absolute right-2 mt-1 w-[200px]">
-        {toggleSideMenu && <Sidemenu clickMyprofile={clickMyprofile} />}
+        {toggleSideMenu && (
+          <Sidemenu
+            clickMyprofile={clickMyprofile}
+            setToggleMyposts={setToggleMyposts}
+          />
+        )}
       </div>
       {toggleEditProfile && (
         <EditProfile
           clickMyprofile={clickMyprofile}
           communityProfile={communityProfile}
+          csrfToken={csrfToken}
+          fetchCommunityInfo={fetchCommunityInfo}
+          setToggleEditProfile={setToggleEditProfile}
         />
       )}
       {/* choose category */}
@@ -426,6 +438,9 @@ export default function WritePost() {
           </div>
         )}{" "}
       </div>
+      {toggleMyposts && (
+        <Myposts csrfToken={csrfToken} setToggleMyposts={setToggleMyposts} />
+      )}
     </div>
   );
 }
@@ -479,7 +494,7 @@ const Navbar = ({ clickSideMenu, communityProfile }) => {
             onClick={clickSideMenu}
           >
             <img
-              src={communityProfile}
+              src={communityProfile.avatar}
               width={45}
               height={40}
               className="rounded-full border border-gray-600 border-[1px] p-1"
@@ -492,7 +507,7 @@ const Navbar = ({ clickSideMenu, communityProfile }) => {
   );
 };
 
-const Sidemenu = ({ clickMyprofile }) => {
+const Sidemenu = ({ clickMyprofile, setToggleMyposts }) => {
   const router = useRouter();
   return (
     <div className=" rounded-xl flex flex-col items-start space-y-4 border shadow-md p-2">
@@ -516,32 +531,7 @@ const Sidemenu = ({ clickMyprofile }) => {
           내 캐릭터
         </button>
       </div>
-      <div className="flex">
-        <svg
-          width="15"
-          height="18"
-          viewBox="0 -4 15 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M5 5H10.5M5 13H10.5M5 9H9.5M13 1H2C1.44772 1 1 1.44772 1 2V16C1 16.5523 1.44772 17 2 17H13C13.5523 17 14 16.5523 14 16V2C14 1.44772 13.5523 1 13 1Z"
-            stroke="#222222"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
 
-        <button
-          className="hover:text-blue-500 ml-3"
-          onClick={() => {
-            router.push("/community/writepost");
-          }}
-        >
-          글 쓰기
-        </button>
-      </div>
       <div className="flex">
         <svg
           width="16"
@@ -557,25 +547,259 @@ const Sidemenu = ({ clickMyprofile }) => {
           />
         </svg>
 
-        <button className="hover:text-blue-500 ml-3">내가 쓴 글</button>
+        <button
+          className="hover:text-blue-500 ml-3"
+          onClick={() => setToggleMyposts(true)}
+        >
+          내가 쓴 글
+        </button>
       </div>
     </div>
   );
 };
 
-const EditProfile = ({ clickMyprofile, communityProfile }) => {
+const EditProfile = ({
+  setToggleEditProfile,
+  communityProfile,
+  csrfToken,
+  fetchCommunityInfo,
+}) => {
   const [nickname, setnickname] = useState("");
-  const [address, setaddress] = useState("");
-  const [usrrate, setusrrate] = useState(1);
-  const changeNickname = (e) => {
-    setnickname(e);
-  };
-  const changeAddress = (e) => {
-    setaddress(e);
-  };
 
+  const router = useRouter();
+
+  const [state, setstate] = useState("");
+  const [county, setcounty] = useState("");
+  const [fullAddress, setfullAddress] = useState("");
+  const addressList = [
+    {
+      state: "AZ",
+      counties: ["Maricopa", "Pima", "Pinal", "Yavapai", "Coconino"],
+    },
+    {
+      state: "CA",
+      counties: [
+        "Los Angeles",
+        "Orange",
+        "Santa Clara",
+        "San Diego",
+        "San Francisco",
+        "Alameda",
+        "Riverside",
+        "San Bernardino",
+      ],
+    },
+    {
+      state: "CO",
+      counties: ["Denver", "Arapahoe", "Jefferson", "Adams", "Douglas"],
+    },
+    {
+      state: "FL",
+      counties: [
+        "Broward",
+        "Miami-Dade",
+        "Orange",
+        "Hillsborough",
+        "Palm Beach",
+      ],
+    },
+    {
+      state: "GA",
+      counties: ["Gwinnett", "Fulton", "DeKalb", "Cobb", "Clayton"],
+    },
+    {
+      state: "HI",
+      counties: ["Honolulu", "Hawaii", "Maui", "Kauai", "Kalawao"],
+    },
+    { state: "IL", counties: ["Cook", "DuPage", "Lake", "Will", "Kane"] },
+    {
+      state: "MA",
+      counties: ["Middlesex", "Suffolk", "Norfolk", "Essex", "Worcester"],
+    },
+    {
+      state: "MD",
+      counties: [
+        "Montgomery",
+        "Howard",
+        "Baltimore",
+        "Anne Arundel",
+        "Prince George's",
+      ],
+    },
+    {
+      state: "MI",
+      counties: ["Wayne", "Oakland", "Macomb", "Washtenaw", "Kent"],
+    },
+    {
+      state: "MN",
+      counties: ["Hennepin", "Ramsey", "Dakota", "Anoka", "Washington"],
+    },
+    {
+      state: "NC",
+      counties: ["Wake", "Mecklenburg", "Guilford", "Durham", "Forsyth"],
+    },
+    {
+      state: "NJ",
+      counties: [
+        "Bergen",
+        "Middlesex",
+        "Hudson",
+        "Essex",
+        "Morris",
+        "Union",
+        "Passaic",
+        "Somerset",
+      ],
+    },
+    {
+      state: "NV",
+      counties: ["Clark", "Washoe", "Carson City", "Douglas", "Elko"],
+    },
+    {
+      state: "NY",
+      counties: [
+        "Queens",
+        "New York (Manhattan)",
+        "Nassau",
+        "Kings (Brooklyn)",
+        "Westchester",
+        "Suffolk",
+        "Rockland",
+        "Erie",
+      ],
+    },
+    {
+      state: "OH",
+      counties: ["Cuyahoga", "Franklin", "Hamilton", "Montgomery", "Summit"],
+    },
+    {
+      state: "PA",
+      counties: [
+        "Philadelphia",
+        "Montgomery",
+        "Allegheny",
+        "Bucks",
+        "Delaware",
+      ],
+    },
+    {
+      state: "TX",
+      counties: [
+        "Harris",
+        "Dallas",
+        "Travis",
+        "Tarrant",
+        "Collin",
+        "Bexar",
+        "Fort Bend",
+        "Williamson",
+      ],
+    },
+    {
+      state: "VA",
+      counties: [
+        "Fairfax",
+        "Loudoun",
+        "Arlington",
+        "Prince William",
+        "Alexandria",
+      ],
+    },
+    {
+      state: "WA",
+      counties: ["King", "Pierce", "Snohomish", "Clark", "Thurston"],
+    },
+  ];
+
+  const [addressModal, setAddressModal] = useState(false);
+  const [targetcounties, setTargetcounties] = useState();
   const [hover, setHover] = useState(false);
+  const [verifiedNickname, setVerifiedNickname] = useState("");
+  const [verifyNicknameClicked, setVerfiedNicknameClicked] = useState(false);
+  const [likeModal, setlikeModal] = useState(false);
 
+  const editProfileSubmit = async () => {
+    console.log("submitted!");
+    if (verifiedNickname !== "ok" && nickname !== communityProfile.nickname) {
+      alert("닉네임 중복을 확인해주세요");
+      return;
+    }
+    const response = await apiFetch("/api/community/update_profile/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      body: JSON.stringify({
+        nickname: nickname,
+        address: fullAddress,
+      }),
+    });
+    if (response.ok) {
+      alert("정보가 업데이트 되었어요");
+      setToggleEditProfile(false);
+      fetchCommunityInfo();
+    }
+  };
+
+  const clickStates = (e) => {
+    if (e !== "") {
+      const target = addressList.find((item) => item.state === e);
+      setTargetcounties(target);
+      setstate(e);
+      //setAddressModal(false);
+    }
+  };
+  const clickCounty = (e) => {
+    if (e !== "") {
+      setcounty(e);
+
+      setAddressModal(false);
+    }
+  };
+  const changeNickname = (e) => {
+    setVerfiedNicknameClicked(false);
+    if (e.length > 11) {
+      alert("닉네임은 최대 11글자까지만 가능해요");
+    } else {
+      setnickname(e);
+    }
+  };
+
+  const validateNickname = async (e) => {
+    setVerfiedNicknameClicked(true);
+    const response = await apiFetch("/api/validate_nickname/", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+      body: JSON.stringify({
+        nickname: nickname,
+      }),
+    });
+    console.log(response);
+    const data = await response.json();
+    if (data["result"]) {
+      setVerifiedNickname("ok");
+    } else {
+      setVerifiedNickname("no");
+    }
+  };
+  useEffect(() => {
+    setfullAddress(communityProfile.address);
+    setnickname(communityProfile.nickname);
+    console.log("comad", communityProfile);
+  }, []);
+
+  useEffect(() => {
+    if (county !== "") {
+      const address = county + ", " + state;
+      setfullAddress(address);
+      setstate("");
+    }
+  }, [county]);
+  useEffect(() => {
+    console.log("targetcounties", targetcounties);
+  }, [targetcounties]);
   return (
     <div>
       {" "}
@@ -586,36 +810,143 @@ const EditProfile = ({ clickMyprofile, communityProfile }) => {
             <div className="flex flex-col mt-4 space-y-12 w-full">
               <div className="flex flex-col w-1/2">
                 <label className="mb-1">닉네임</label>
-                <input
-                  type="nickname"
-                  value={nickname}
-                  onChange={(e) => changeNickname(e.target.value)}
-                  placeholder="닉네임"
-                  className="border border-blue-500 h-8 rounded-2xl p-2 text-center"
-                />
+                <div className="border border-blue-500 h-8 rounded-2xl text-center flex relative">
+                  <input
+                    type="nickname"
+                    value={nickname}
+                    onChange={(e) => changeNickname(e.target.value)}
+                    placeholder="닉네임"
+                    className="py-full rounded-2xl w-full text-center"
+                  />{" "}
+                  {nickname !== "" &&
+                    nickname !== communityProfile?.nickname && (
+                      <div className="flex justify-center items-center absolute right-[-55px] top-[4px]">
+                        <button
+                          className="rounded-full px-[5px] text-sm bg-white border shadow-sm hover:bg-gray-50"
+                          value={nickname}
+                          onClick={(e) => {
+                            validateNickname(e.target.value);
+                          }}
+                        >
+                          {!verifyNicknameClicked ? (
+                            <div>확인</div>
+                          ) : (
+                            <>
+                              {verifiedNickname === "ok" ? (
+                                <div>👍</div>
+                              ) : (
+                                <p className="text-black">사용중</p>
+                              )}
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                </div>{" "}
               </div>
               <div className="flex flex-col w-1/2">
                 <label className="mb-1">사는 곳</label>
-                <input
-                  type="address"
-                  value={address}
-                  onChange={(e) => changeAddress(e.target.value)}
-                  placeholder="사는곳"
-                  className="border border-blue-500 h-8 rounded-2xl p-2 text-center"
-                />
+                <div className="relative">
+                  <input
+                    type="address"
+                    readOnly
+                    placeholder="지역을 알려주세요"
+                    value={fullAddress}
+                    onClick={() => {
+                      addressModal
+                        ? setAddressModal(false)
+                        : setAddressModal(true);
+                    }}
+                    className="border border-blue-500 h-8 rounded-2xl p-2 text-center w-full cursor-pointer"
+                  />
+
+                  {addressModal && (
+                    <div className="absolute z-10 mt-12 w-full rounded rounded-xl border border-blue-500  bg-white shadow py-4">
+                      <div className="w-full max-h-[200px] overflow-y-auto">
+                        {state === "" &&
+                          addressList.map((obj, idx) => (
+                            <div className="w-full" key={idx}>
+                              <button
+                                key={idx}
+                                onClick={(e) => {
+                                  clickStates(e.target.value);
+                                }}
+                                className=" rounded rounded-full text-center hover:bg-gray-50 w-full"
+                                value={obj.state}
+                              >
+                                {obj.state}
+                              </button>
+                            </div>
+                          ))}
+                        {state !== "" &&
+                          targetcounties?.counties?.map((obj, idx) => (
+                            <div className="w-full" key={idx}>
+                              <button
+                                key={idx}
+                                value={obj}
+                                onClick={(e) => {
+                                  clickCounty(e.target.value);
+                                }}
+                                className=" rounded rounded-full text-center hover:bg-blue-50 w-full"
+                              >
+                                {obj}
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col w-1/2">
-                <label className="mb-1">인기도</label>
-                <div className="border border-blue-500 h-8 rounded-2xl p-2 text-center flex items-center justify-center">
-                  1{" "}
+                <h className="mb-1">인기도</h>
+
+                {/* blue border “likes” bar */}
+                <div className="relative border border-blue-500 h-8 rounded-2xl flex items-center justify-between ">
+                  <span className="ml-3">‎ </span>
+                  <span>{communityProfile?.likes}</span>{" "}
+                  <span
+                    className="text-[8px] mr-3 cursor-pointer"
+                    onClick={() => setlikeModal(!likeModal)}
+                  >
+                    ▼
+                  </span>
                 </div>
+
+                {/* scrollable avatar column */}
+                {likeModal && (
+                  <div className="absolute top-[530px] w-[180px] max-h-48 overflow-y-auto flex flex-col space-y-1 ">
+                    {communityProfile?.liked_users_avatar?.map((src, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-row items-center hover:bg-gray-200 border border-rounded rounded-full cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/community/usrprofile?usr=${communityProfile?.liked_users_nickname[idx]}`
+                          )
+                        }
+                      >
+                        {" "}
+                        <img
+                          key={idx}
+                          src={src}
+                          alt="liked user"
+                          className="w-8 h-8 object-cover rounded-full"
+                        />
+                        <span className="text-gray-500 ml-2">
+                          {communityProfile?.liked_users_nickname[idx]}
+                        </span>
+                      </div>
+                    ))}{" "}
+                  </div>
+                )}
               </div>
             </div>
             <img
-              src={communityProfile}
+              src={communityProfile.avatar}
               width={350}
               height={350}
-              className="mx-auto"
+              className="mx-auto object-contain"
             ></img>
             <div className="w-full flex justify-end">
               <Link
@@ -636,15 +967,15 @@ const EditProfile = ({ clickMyprofile, communityProfile }) => {
               </Link>
             </div>
           </div>
-          <div className="space-x-4 flex justify-end mt-[100px] mr-4">
+          <div className="space-x-4 flex justify-end mt-[100px] mr-4 ">
             <button
-              onClick={() => clickMyprofile()}
+              onClick={() => setToggleEditProfile(false)}
               className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
             >
               취소
             </button>
             <button
-              onClick={() => clickMyprofile()}
+              onClick={() => editProfileSubmit()}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
             >
               변경
@@ -812,3 +1143,88 @@ function Funselector({
     </div>
   );
 }
+
+const Myposts = ({ posts, csrfToken, setToggleMyposts }) => {
+  const [myposts, setmyposts] = useState([]);
+
+  const router = useRouter();
+  const fetchMyposts = async () => {
+    const res = await apiFetch("/api/posts/get_my_posts/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+    });
+
+    const data = await res.json();
+    setmyposts(data["results"]);
+  };
+  useEffect(() => {
+    fetchMyposts();
+    console.log("mypost", myposts);
+  }, []);
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
+      <div className="relative bg-white w-2/3 h-[70vh] p-8 rounded-xl shadow-xl">
+        <div className="h-[50vh] overflow-y-auto flex flex-col">
+          {myposts?.map((mypost, index) => (
+            <div key={index}>
+              <div>
+                <button className="border rounded rounded-full overflow-y-auto p-2 mb-1 hover:bg-gray-100 w-full">
+                  <div className="flex flex-row justify-between items-center">
+                    <p
+                      className="text-left ml-4"
+                      onClick={() => router.push(`funpost/${mypost.slug}`)}
+                    >
+                      {mypost.title}
+                    </p>
+                    <p className="text-xs mr-2 ">
+                      {"["}11{"]"}
+                    </p>
+                  </div>
+                </button>
+              </div>
+              <div className="w-full rounded ml-4"></div>
+              <div className="flex flex-row justify-end mb-4">
+                {" "}
+                {mypost.post_like.liked_avatars.length !== 0 ? (
+                  <span className="text-xs flex items-center mr-2">좋아요</span>
+                ) : (
+                  <>‎ </>
+                )}
+                {mypost?.post_like?.liked_avatars.map((obj, i) => (
+                  <>
+                    <button key={i}>
+                      <img
+                        src={obj}
+                        width={30}
+                        height={30}
+                        className="rounded rounded-full border shadow mr-1 opacity-80 hover:opacity-100"
+                        onClick={() =>
+                          router.push(
+                            `/community/usrprofile?usr=${mypost?.post_like?.liked_nickname[i]}`
+                          )
+                        }
+                      ></img>
+                    </button>
+                  </>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="absolute right-4 bottom-12 ">
+          <div className="space-x-4 flex justify-end mt-[100px] mr-4">
+            <button
+              onClick={() => setToggleMyposts(false)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

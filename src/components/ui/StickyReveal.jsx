@@ -85,7 +85,7 @@ export default function StickyScroll({
       }}
       className="relative flex justify-center space-x-20  p-10"
     >
-      <div className="relative flex items-start px-16">
+      <div className="relative flex items-start md:px-16">
         <div className="max-w-2xl">
           {contentTitle.map((item, index) => (
             <div key={item + index} className="my-[150px]">

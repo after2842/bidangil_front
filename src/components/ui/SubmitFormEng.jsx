@@ -1,14 +1,15 @@
 "use client";
 import React, { useState, useRef, useEffect, use } from "react";
 import { BoxIcon, GlobeIcon, Tag, TagIcon } from "lucide-react";
-import { AddressScreen } from "./AddressScreen_2";
+import { AddressScreenEng } from "./AddressScreenEng";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import RequestForm from "./RequestForm";
+import RequestFormEng from "./RequestFormEng";
 import Image from "next/image";
 import AddressAutocomplete from "./AddressAutoComp";
 import { apiFetch, wsUrl } from "@/lib/api";
-export default function Submit_2() {
+
+export default function Submit_2_Eng() {
   const router = useRouter();
   const { fetchCsrfToken } = useUser();
   const [currentPage, setcurrentPage] = useState(1);
@@ -28,6 +29,7 @@ export default function Submit_2() {
   const [showMissingModal, setMissingModal] = useState(false);
   const [showValidAddress, setValidAddress] = useState(false);
   const [precise_data, setPreciseData] = useState("");
+
   const formatAddressString = (address) => {
     // e.g. "11818 South St STE 102, Cerritos, CA 990703"
     const { addressLine1, city, state, zip } = address;
@@ -74,18 +76,22 @@ export default function Submit_2() {
       setcurrentPage(index + 1);
     }
   };
+
   const prevPage = ({ index }) => {
     console.log("prev clicked!");
     setcurrentPage(index - 1);
   };
 
-  const title = ["배송주소 & 개인정보", "구매 신청", "확인"];
+  const title = [
+    "Shipping Address & Personal Info",
+    "Purchase Request",
+    "Confirmation",
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("All Forms Data:", forms);
     console.log("Address Data:", address);
-    //alert("All forms + address submitted! Check console for details.");
     const payload = {
       orders: forms,
       address: address,
@@ -108,22 +114,23 @@ export default function Submit_2() {
       if (response.status === 200) {
         console.log(`RESULTTT:${result["order_id"]}`);
         alert(
-          "성공적으로 전송되었습니다! \n메인화면 -> '내 정보'에서 확인해주세요"
+          "Successfully submitted! \nPlease check 'My Profile' on the main page"
         );
-        router.push("/");
+        router.push("/en");
       } else {
-        alert("로그인 후 이용해주세요");
+        alert("Please log in to use this feature");
         sessionStorage.setItem("savedAddress", JSON.stringify(address));
         sessionStorage.setItem("savedForms", JSON.stringify(forms));
-        router.push("/login");
+        router.push("/en/login");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("네트워크 오류가 발생했습니다.");
+      alert("Network error occurred.");
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     const savedAddress = sessionStorage.getItem("savedAddress");
     const savedForms = sessionStorage.getItem("savedForms");
@@ -185,7 +192,7 @@ export default function Submit_2() {
                   className="bg-gray-500 rounded-3xl py-2 px-8 text-white text-sm"
                   onClick={() => prevPage({ index: currentPage })}
                 >
-                  이전
+                  Previous
                 </button>
               )}
               {currentPage === 1 && (
@@ -193,7 +200,7 @@ export default function Submit_2() {
                   className="bg-blue-500 rounded-3xl py-2 px-8 text-white text-sm"
                   onClick={() => nextPage({ index: currentPage })}
                 >
-                  다음
+                  Next
                 </button>
               )}
               {currentPage === 2 && (
@@ -201,7 +208,7 @@ export default function Submit_2() {
                   className="bg-blue-500 rounded-3xl py-2 px-8 text-white text-sm"
                   onClick={() => nextPage({ index: currentPage })}
                 >
-                  다음
+                  Next
                 </button>
               )}
               {currentPage == 3 && (
@@ -214,7 +221,7 @@ export default function Submit_2() {
                   {isLoading ? (
                     <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
                   ) : (
-                    <p>제출완료</p>
+                    <p>Submit</p>
                   )}
                 </button>
               )}
@@ -244,14 +251,13 @@ const ControlPanel = ({
     <div className=" md:w-full md:h-full rounded-lg bg-gray-100 flex flex-col px-2 pb-12 relative">
       <div className="mx-auto w-full">
         <div className=" text-sm">
-          {/* <div className="justify center font-myfont mt-4">주문 내역</div> */}
           <div className=" w-full flex flex-col">
             {currentPage === 1 && (
               <div>
                 <div className="hidden md:flex mt-2 justify-start">
                   <button
                     onClick={() => {
-                      router.push("/");
+                      router.push("/en");
                     }}
                   >
                     <Image
@@ -271,7 +277,7 @@ const ControlPanel = ({
                       height={20}
                       className="object-contain flex-shrink-0"
                     />
-                    <h className="ml-1 text-[17px]"> 환율</h>
+                    <h className="ml-1 text-[17px]"> Exchange Rate</h>
                   </div>
                   <div className="hidden md:flex ml-2 mb-4">
                     <Image
@@ -281,7 +287,7 @@ const ControlPanel = ({
                       height={20}
                       className="object-contain flex-shrink-0"
                     />
-                    <h className="ml-1 text-[17px]">주소&개인정보</h>
+                    <h className="ml-1 text-[17px]">Address & Personal Info</h>
                   </div>
                   <AddressAutocomplete
                     address={address}
@@ -289,7 +295,9 @@ const ControlPanel = ({
                   />
                   {showMissingModal && (
                     <div className="mt-24 flex absolute bottom-2 md:bottom-12 left-0 w-full justify-center">
-                      <h className="text-blue-500">모든 정보를 입력해주세요</h>
+                      <h className="text-blue-500">
+                        Please fill in all information
+                      </h>
                     </div>
                   )}
 
@@ -333,7 +341,7 @@ const ControlPanel = ({
 
             {currentPage === 3 && (
               <div className="flex flex-col items-center  justify-center mt-[180px]">
-                <div>배송 주소</div>
+                <div>Shipping Address</div>
                 <img
                   src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(
                     googleAddress
@@ -356,9 +364,9 @@ const WriteForm = ({ currentPage, address, setAddress, forms, setforms }) => {
   return (
     <div className="w-full h-full">
       {currentPage && currentPage === 1 ? (
-        <AddressScreen address={address} setAddress={setAddress} />
+        <AddressScreenEng address={address} setAddress={setAddress} />
       ) : currentPage === 2 ? (
-        <RequestForm forms={forms} setforms={setforms}></RequestForm>
+        <RequestFormEng forms={forms} setforms={setforms}></RequestFormEng>
       ) : currentPage === 3 ? (
         <FinalSummary forms={forms} address={address}></FinalSummary>
       ) : null}
@@ -371,7 +379,7 @@ const FinalSummary = ({ forms, address }) => {
     <div className="w-full h-full ">
       <div className="max-w-2xl p-4 md:p-8  mx-auto">
         <div className="text-left font-myfont mb-4">
-          <h className="text-xl">신청내용</h>
+          <h className="text-xl">Application Details</h>
         </div>
 
         {forms &&
@@ -404,7 +412,7 @@ const FinalSummary = ({ forms, address }) => {
             <div className="text-left rounded-lg w-full mb-8">
               {" "}
               <div className="text-left font-myfont mt-8 mb-4">
-                <h className="text-xl">배송 정보</h>
+                <h className="text-xl">Shipping Information</h>
               </div>
               <div className="flex flex-row ml-2">
                 {address.addressLine2 ? (
@@ -431,7 +439,7 @@ const FinalSummary = ({ forms, address }) => {
             <div className="text-left rounded-lg w-full mt-4 mb-8">
               {" "}
               <div className="text-left font-myfont mt-8 mb-4">
-                <h className="text-xl">배송받는 분</h>
+                <h className="text-xl">Recipient Information</h>
               </div>{" "}
               <div className="ml-2">{address.name}</div>
               <div className="ml-2">{address.phone}</div>

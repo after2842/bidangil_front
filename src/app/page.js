@@ -13,6 +13,7 @@ import Pricing from "@/components/ui/Pricinig";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import LandingHero from "@/components/ui/LandingHero";
+
 const ContainerTextFlip = dynamic(
   () =>
     import("@/components/ui/container-text-flip").then((mod) => mod.default),
@@ -105,14 +106,14 @@ export default function Home() {
       <section
         className="
             h-screen
-            bg-black            
+            bg-gray-950           
             md:bg-[url('/images/main_image_2.jpg')]  /* Background starts at md */
             md:bg-cover
             md:bg-center
             filter brightness-100
           "
       >
-        <div className="pt-[120px]">
+        <div className="md:pt-[120px]">
           <GlowingEffectDemoSecond></GlowingEffectDemoSecond>
         </div>
       </section>

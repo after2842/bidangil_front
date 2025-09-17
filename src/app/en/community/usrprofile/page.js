@@ -5,6 +5,7 @@ import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+
 export default function UserProfile({ searchParams }) {
   const params = useSearchParams();
   const user = params.get("usr") ?? "";
@@ -21,16 +22,18 @@ export default function UserProfile({ searchParams }) {
       },
     });
     if (response.status === 500) {
-      alert("something wrong!");
+      alert("Something went wrong!");
     }
     const data = await response.json();
     setusrdata(data["result"]);
   };
+
   useEffect(() => {
     console.log(user);
     fetchUserinfo();
     console.log(usrdata);
   }, []);
+
   return (
     <div className="w-full h-screen">
       <div className="flex flex-col justify-center items-center border ">
@@ -52,8 +55,8 @@ export default function UserProfile({ searchParams }) {
           {" "}
           {usrdata && (
             <div className="items-center text-xl">
-              <span className="font-myfont">{usrdata?.nickname}</span> 님이
-              좋아한 포스트
+              Posts liked by{" "}
+              <span className="font-myfont">{usrdata?.nickname}</span>
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-[260px]">
@@ -66,8 +69,7 @@ export default function UserProfile({ searchParams }) {
           {" "}
           {usrdata && (
             <div className="items-center text-xl">
-              <span className="font-myfont">{usrdata?.nickname}</span> 님의
-              포스트
+              <span className="font-myfont">{usrdata?.nickname}</span>'s posts
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 auto-rows-[260px] mb-12">
@@ -90,7 +92,7 @@ const PostCard = ({ post }) => {
       whileHover={{ scale: 1.03 }} // <— slightly bigger on hover
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       onClick={() => {
-        router.push(`funpost/${post.slug}`);
+        router.push(`/en/community/funpost/${post.slug}`);
       }}
     >
       {/* Image area */}
@@ -115,11 +117,11 @@ const PostCard = ({ post }) => {
 
 function formatDate(dateString) {
   const date = new Date(dateString); // parse to Date object
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is 0-based
+  const month = date.toLocaleString("en-US", { month: "long" }); // get full month name in English
   const day = String(date.getDate()).padStart(2, "0");
   const year = date.getFullYear();
 
-  return `${month}월 ${day}일 ${year}`;
+  return `${month} ${day}, ${year}`;
 }
 
 function HoldButton({ nickname, address, likes, csrf }) {
@@ -140,14 +142,14 @@ function HoldButton({ nickname, address, likes, csrf }) {
       }),
     });
     if (res.status == 500) {
-      alert("로그인 후 이용해주세요");
-      router.push("/login");
+      alert("Please log in to use this feature");
+      router.push("/en/login");
     } else if (res.status === 200) {
       let result = await res.json();
       if (result["result"] == "liked") {
-        alert("포스트를 좋아했어요!");
+        alert("You liked the post!");
       } else if (result["result"] == "unliked") {
-        alert("포스트를 취소했어요!");
+        alert("You unliked the post!");
       }
     }
   };
@@ -198,9 +200,9 @@ function HoldButton({ nickname, address, likes, csrf }) {
         />
 
         <div className="flex flex-col justify-center px-6 py-1">
-          <p className="text-left">닉네임 : {nickname}</p>
-          <p className="text-left">사는 곳: {address}</p>
-          <p className="text-left">인기도 : {likes}</p>
+          <p className="text-left">Nickname: {nickname}</p>
+          <p className="text-left">Location: {address}</p>
+          <p className="text-left">Popularity: {likes}</p>
         </div>
       </button>
     </div>

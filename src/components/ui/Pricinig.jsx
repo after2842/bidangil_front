@@ -7,7 +7,6 @@ import {
   JapaneseYenIcon as Yen,
   Euro,
   PoundSterling,
-  Bitcoin,
   CreditCard,
   Tag,
   Package,
@@ -30,7 +29,7 @@ export function CardDemo({
   primaryDeliveryIcon = "",
 }) {
   return (
-    <Card>
+    <Card className="relative">
       <CardSkeletonContainer>
         <Skeleton
           cardType={cardType}
@@ -39,8 +38,15 @@ export function CardDemo({
           primaryDeliveryIcon={primaryDeliveryIcon}
         />
       </CardSkeletonContainer>
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
+      <div className="hidden md:block">
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </div>
+      <div className="md:hidden absolute bottom-16">
+        {" "}
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </div>
     </Card>
   );
 }
@@ -412,16 +418,17 @@ export default function Pricing() {
   return (
     <div className="min-h-screen p- flex flex-col items-center justify-center">
       <div className="w-full max-w-7xl">
-        <h1 className="text-5xl text-black mb-12 font-myfont text-left">
+        <h1 className="text-5xl text-black mb-12 font-myfont text-left md:text-left text-center">
           가격
         </h1>
       </div>
-      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="w-[300px] h-[500px] md:h-full md:w-full flex overflow-x-auto max-w-7xl md:grid md:grid-cols-3 gap-8">
         <CardDemo
           title="대행 수수료"
           description="구매 대금의 4%가 부가돼요."
           cardType="pricing"
           primaryIcon="tag"
+          className="mr-4"
         />
 
         <CardDemo

@@ -17,9 +17,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <DesktopGuard>
-          <UserProvider>{children}</UserProvider>
-        </DesktopGuard>
+        {/* <DesktopGuard> */}
+        <UserProvider>{children}</UserProvider>
+        {/* </DesktopGuard> */}
       </body>
     </html>
   );

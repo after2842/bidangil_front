@@ -54,22 +54,20 @@ export default function FloatingNavbar() {
 
         {/* Right: Menu Options */}
         <nav className="flex items-center space-x-8 text-white">
-          <button>
-            <a href="/community" className=" font-semibold hover:underline">
-              Community
-            </a>
+          <button onClick={() => router.push("/en/community")}>
+            <span className="font-semibold hover:underline">Community</span>
           </button>
 
           {user ? (
             <div className="flex items-center space-x-8 text-white">
-              <button onClick={logout}>로그아웃</button>
-              <a href="/profile" className="font-semibold hover:underline">
-                Profile
-              </a>
+              <button onClick={logout}>Logout</button>
+              <button onClick={() => router.push("/en/profile")}>
+                <span className="font-semibold hover:underline">Profile</span>
+              </button>
             </div>
           ) : (
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/en/login")}
               className="font-semibold hover:underline"
             >
               Log in

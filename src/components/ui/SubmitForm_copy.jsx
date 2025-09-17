@@ -12,6 +12,7 @@ export default function Submit_2() {
   const router = useRouter();
   const { fetchCsrfToken } = useUser();
   const [currentPage, setcurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [address, setAddress] = useState({
     addressLine1: "",
     addressLine2: "",
@@ -92,6 +93,7 @@ export default function Submit_2() {
     const csrf_token = await fetchCsrfToken();
 
     try {
+      setIsLoading(true);
       const response = await apiFetch("/api/submit_order/", {
         method: "POST",
         credentials: "include",
@@ -110,13 +112,32 @@ export default function Submit_2() {
         );
         router.push("/");
       } else {
-        alert("서버 오류가 발생했습니다.");
+        alert("로그인 후 이용해주세요");
+        sessionStorage.setItem("savedAddress", JSON.stringify(address));
+        sessionStorage.setItem("savedForms", JSON.stringify(forms));
+        router.push("/login");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("네트워크 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
+  useEffect(() => {
+    const savedAddress = sessionStorage.getItem("savedAddress");
+    const savedForms = sessionStorage.getItem("savedForms");
+
+    if (savedAddress) {
+      setAddress(JSON.parse(savedAddress));
+      sessionStorage.removeItem("savedAddress");
+    }
+
+    if (savedForms) {
+      setforms(JSON.parse(savedForms));
+      sessionStorage.removeItem("savedForms");
+    }
+  }, []);
 
   return (
     <div className="h-screen w-full bg-gray-950 bg-center flex items-center justify-center ">
@@ -188,8 +209,13 @@ export default function Submit_2() {
                   className="bg-blue-500 rounded-3xl py-2 px-8 text-white text-sm "
                   onClick={handleSubmit}
                   type="submit"
+                  disabled={isLoading}
                 >
-                  제출완료
+                  {isLoading ? (
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                  ) : (
+                    <p>제출완료</p>
+                  )}
                 </button>
               )}
             </div>
@@ -416,3 +442,4 @@ const FinalSummary = ({ forms, address }) => {
     </div>
   );
 };
+

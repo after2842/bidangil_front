@@ -19,36 +19,42 @@ export function LoginScreen() {
   const { loginUser, fetchCsrfToken } = useUser();
   const [userpassword, setPassword] = useState("");
   const [useremail, setemail] = useState("");
-  const [error, setError] = useState("");
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+
     try {
       const result = await loginUser(userpassword, useremail);
       console.log(result);
 
       if (result.success) {
-        await fetchCsrfToken(); // optional depending on your login flow
-        router.push("/");
+        await fetchCsrfToken(); // optional depending on login flow
+        const savedAddress = sessionStorage.getItem("savedAddress");
+        const savedForms = sessionStorage.getItem("savedForms");
+        if (savedAddress && savedForms) {
+          router.push("/form");
+        } else {
+          router.push("/");
+        }
       } else {
-        setError("Invalid login");
         alert("아이디나 비밀번호가 일치하지 않아요!");
       }
     } catch (err) {
       console.error("Unexpected error during login:", err);
       alert("problem");
-      setError("로그인 중 오류가 발생했습니다.");
     }
   };
+
   return (
-    <div className="shadow-input text-white mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
-      <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200 font-myfont flex justify-center">
-        비단길
+    <div className="shadow-input text-white mx-auto w-[350px]  md:border-none md:w-full max-w-md rounded-2xl md:bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+      <h2 className="text-2xl font-bold md:text-neutral-800 dark:text-neutral-200 font-myfont flex justify-center">
+        비단길 로그인
       </h2>
       <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300"></p>
       <form className="my-8" onSubmit={handleLogin}>
         <LabelInputContainer className="mb-4">
-          <Label htmlFor="email">이메일 주소</Label>
+          <Label htmlFor="email" className="md:text-black text-white">
+            이메일 주소
+          </Label>
           <Input
             id="email"
             placeholder="happyShop@bidangil.com"
@@ -57,8 +63,10 @@ export function LoginScreen() {
             onChange={(e) => setemail(e.target.value)}
           />
         </LabelInputContainer>
-        <LabelInputContainer className="mb-4">
-          <Label htmlFor="password">비밀번호</Label>
+        <LabelInputContainer className="mb-4 ">
+          <Label htmlFor="password" className="md:text-black text-white">
+            비밀번호
+          </Label>
           <Input
             id="password"
             placeholder="••••••••"
@@ -69,7 +77,7 @@ export function LoginScreen() {
         </LabelInputContainer>
 
         <button
-          className="group/btn relative block h-10 w-full rounded-md bg-blue-500 font-medium text-white"
+          className="group/btn relative block h-10 w-full rounded-full md:rounded-md bg-blue-600 md:bg-blue-500 font-medium text-white"
           type="submit"
         >
           로그인
@@ -79,7 +87,7 @@ export function LoginScreen() {
         <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
 
         <div className="flex flex-col space-y-4">
-          <div className="text-center font-myfont text-black">
+          <div className="text-center font-myfont text-white md:text-black">
             비단길이 처음이신가요?
           </div>
           <button
@@ -128,3 +136,4 @@ const LabelInputContainer = ({ children, className }) => {
     </div>
   );
 };
+

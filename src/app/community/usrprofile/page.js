@@ -4,7 +4,7 @@ import { apiFetch } from "@/lib/api";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from 'next/navigation';
 export default function UserProfile({ searchParams }) {
   const params = useSearchParams();
   const user = params.get("usr") ?? "";

@@ -1,9 +1,9 @@
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import Script from "next/script";
-import DesktopGuard from "@/components/ui/DesktopGuard";
+import DesktopGuard from "@/components/ui/DesktopGuard"
 export const metadata = {
-  title: "비단길, 한국 쇼핑몰을 미국에서 받아보세요",
+  title: "비단길 한국 쇼핑몰을 미국에서 받아보세요.",
   description: "비단길, 한국 쇼핑몰을 미국에서 받아보세요.",
 };
 
@@ -17,9 +17,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        {/* <DesktopGuard> */}
+	  <DesktopGuard>
         <UserProvider>{children}</UserProvider>
-        {/* </DesktopGuard> */}
+	  </DesktopGuard>
       </body>
     </html>
   );

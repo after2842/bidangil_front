@@ -1,21 +1,33 @@
-{
-  "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
-  "rsc": true,
-  "tsx": false,
-  "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "src/app/globals.css",
-    "baseColor": "neutral",
-    "cssVariables": true,
-    "prefix": ""
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    // Allow loading optimized images from external hosts via next/image.
+    // Add any domains here that your app needs to fetch images from.
+    // Example: Microlink provides URL previews (thumbnails) so we allow it.
+    domains: [
+      "api.microlink.io", // Microlink Image Preview - allowed source for <Image />
+    ],
   },
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+
+  // Extend Next's webpack configuration.
+  // This function receives the current webpack config, modifies it and returns it.
+  webpack(config) {
+    // Add a rule to handle SVG imports with @svgr/webpack so SVGs can be used
+    // as React components:
+    //
+    // - test: matches files that end with .svg
+    // - issuer: only apply this rule when the importer is a JS/TS file
+    //   (prevents applying the loader when SVGs are referenced from CSS, etc.)
+    // - use: the loader we want to run; @svgr/webpack transforms SVG -> React component
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: /\.[jt]sx?$/, // only when imported from .js/.jsx/.ts/.tsx files
+      use: ["@svgr/webpack"], // transforms SVG into a React component
+    });
+
+    // It's important to return the modified config so Next.js uses it.
+    return config;
   },
-  "iconLibrary": "lucide"
-}
+};
+
+export default nextConfig;

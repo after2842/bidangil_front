@@ -23,13 +23,8 @@ export function AddressScreen({ address, setAddress, onClose }) {
       return;
     }
     // TODO: Handle submit logic (API call, etc.)
-    console.log("Submitted Address:", {
-      addressLine1,
-      addressLine2,
-      city,
-      state: stateUS,
-      zipCode,
-    });
+    //debug log removed
+
   };
 
   return (
